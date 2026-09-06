@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.env
+wheels/
+oss2tmp/
+
+# 前端（Next.js）
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/tsconfig.tsbuildinfo
+
+# 数据库与迁移备份
+*.db
+*.sqlite3
+
+# 上传文件
+uploads/
+knowledge/
+
+# 构建/运行日志
+*.log
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+.trae/
+
+# 第三方参考副本（原 TS 项目，非本项目代码，不入库）
+summer-checkin-master/
+
+# 测试
+.pytest_cache/

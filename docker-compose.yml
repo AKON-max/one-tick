@@ -1,0 +1,77 @@
+# ============================================================
+# Python Checkin - 本地/服务器一键启动
+#   docker compose up -d --build
+# 组件：pgvector 数据库 + FastAPI 后端 + nginx 反代（HTTP + WebSocket）
+# ============================================================
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: python_checkin
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d python_checkin"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      # 数据库：指向 compose 内的 db 服务
+      DATABASE_URL: postgresql+psycopg2://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/python_checkin
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-change-me}
+      CRON_SECRET: ${CRON_SECRET:-}
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-http://localhost}
+      # AI 模型池（模型池自动按档降级）
+      AGNES_API_KEY: ${AGNES_API_KEY:-}
+      ALIYUN_API_KEY: ${ALIYUN_API_KEY:-}
+      EMBEDDING_API_KEY: ${EMBEDDING_API_KEY:-}
+      AI_TOKEN_LIMIT: ${AI_TOKEN_LIMIT:-200000}
+      # OSS（头像/壁纸直传）
+      OSS_ACCESS_KEY_ID: ${OSS_ACCESS_KEY_ID:-}
+      OSS_ACCESS_KEY_SECRET: ${OSS_ACCESS_KEY_SECRET:-}
+      OSS_BUCKET: ${OSS_BUCKET:-}
+      OSS_REGION: ${OSS_REGION:-oss-cn-guangzhou}
+      OSS_PUBLIC_BASE_URL: ${OSS_PUBLIC_BASE_URL:-}
+    depends_on:
+      db:
+        condition: service_healthy
+    expose:
+      - "8001"
+
+  web:
+    # 前端（Next.js 纯 UI 层，位于 frontend/ 子目录）
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      # 服务端 fetch 直连 FastAPI（compose 网络内）
+      API_INTERNAL_URL: http://app:8001
+      # rewrites 代理目标（生产由 nginx 分流，此处仅作兜底）
+      API_PROXY_TARGET: http://app:8001
+    depends_on:
+      - app
+    expose:
+      - "3000"
+
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "${HTTP_PORT:-80}:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+      - web
+
+volumes:
+  pgdata:

@@ -1,0 +1,43 @@
+# ============================================================
+# Python Checkin - 全栈学习打卡平台（Python 版）
+# 后端技术栈：FastAPI + SQLAlchemy 2.0 + PostgreSQL(pgvector)
+# ============================================================
+
+# ---- Web 框架 ----
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-multipart==0.0.20
+
+# ---- 数据库 ----
+sqlalchemy==2.0.36
+alembic==1.14.0
+psycopg2-binary==2.9.10
+pgvector==0.3.6
+
+# ---- 认证 ----
+pydantic==2.10.4
+pydantic-settings==2.7.0
+email-validator==2.2.0
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+# ---- AI ----
+openai==1.58.1
+
+# ---- 工具 ----
+python-docx==1.1.2
+PyPDF2==3.0.1
+APScheduler==3.10.4
+
+# ---- OSS 上传 ----
+# 注意：oss2 依赖 crcmod（C 扩展）。宿主机（有编译器）正常装；
+# Docker 里用 --no-deps 安装，由 vendor/crcmod.py 纯 Python 替代（见 Dockerfile）
+# oss2 2.19.1 的完整依赖（requires_dist）：requests / crcmod / pycryptodome /
+# aliyun-python-sdk-core / aliyun-python-sdk-kms / six。除 crcmod 外均在此列出，
+# 不装齐的话 import oss2 会逐层报 ModuleNotFoundError。
+oss2==2.19.1
+pycryptodome==3.21.0
+requests==2.32.3
+aliyun-python-sdk-core==2.16.1
+aliyun-python-sdk-kms==2.16.5
+six==1.17.0

@@ -1,0 +1,10 @@
+# 不进入 Docker 构建上下文的内容
+.venv/
+__pycache__/
+*.pyc
+.env
+server.log
+.git/
+.idea/
+.vscode/
+scripts/

@@ -1,0 +1,184 @@
+/* ============================================================
+   文档工作室样式（自研编辑器）：AI 高亮闪烁 / 阅读排版 / 滚动条 / 搜索高亮
+   原 Milkdown 主题段已随死代码一并移除（2026-08-28）
+   ============================================================ */
+
+/* ── AI 修改后的高亮闪烁 ── */
+.studio-ai-flash {
+  animation: studio-ai-flash 1.8s ease-out;
+}
+
+@keyframes studio-ai-flash {
+  0% {
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--theme-primary) 65%, transparent);
+  }
+
+  100% {
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--theme-primary) 0%, transparent);
+  }
+}
+
+/* ── 阅读模式（只读渲染）文档排版 ── */
+.studio-read {
+  color: color-mix(in srgb, var(--foreground) 92%, transparent);
+  font-size: 0.95rem;
+  line-height: 1.85;
+}
+
+.studio-read h1 {
+  margin: 2.2rem 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--surface-card-border);
+  color: var(--text-title);
+  font-size: 1.9rem;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+.studio-read h1:first-child {
+  margin-top: 0;
+}
+
+.studio-read h2 {
+  margin: 1.8rem 0 0.6rem;
+  color: color-mix(in srgb, var(--text-title) 94%, var(--theme-primary) 6%);
+  font-size: 1.4rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.studio-read h3 {
+  margin: 1.4rem 0 0.5rem;
+  color: var(--theme-secondary-foreground);
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.studio-read p {
+  margin: 0.5rem 0;
+}
+
+.studio-read ul,
+.studio-read ol {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.studio-read li {
+  margin-top: 0.2rem;
+}
+
+.studio-read li::marker {
+  color: color-mix(in srgb, var(--theme-primary) 60%, transparent);
+}
+
+.studio-read a {
+  color: var(--theme-primary);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--theme-primary) 35%, transparent);
+  text-underline-offset: 3px;
+}
+
+.studio-read blockquote {
+  margin: 0.5rem 0;
+  padding: 0.4rem 1rem;
+  border-left: 3px solid color-mix(in srgb, var(--theme-primary) 50%, transparent);
+  background: color-mix(in srgb, var(--theme-primary) 5%, transparent);
+  border-radius: 0 0.45rem 0.45rem 0;
+  color: color-mix(in srgb, var(--theme-secondary-foreground) 75%, transparent);
+}
+
+.studio-read code {
+  padding: 0.15em 0.4em;
+  border-radius: 0.35rem;
+  background: var(--surface-input-bg);
+  color: var(--theme-primary);
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+}
+
+.studio-read pre {
+  margin: 0.5rem 0;
+  overflow-x: auto;
+  padding: 1rem 1.2rem;
+  border: 1px solid var(--surface-card-border);
+  border-radius: 0.65rem;
+  background: var(--surface-darkglass-bg);
+}
+
+.studio-read pre code {
+  padding: 0;
+  background: transparent;
+  color: color-mix(in srgb, var(--foreground) 88%, transparent);
+}
+
+.studio-read hr {
+  margin: 1.5rem 0;
+  border: 0;
+  border-top: 1px solid var(--surface-card-border);
+}
+
+.studio-read table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.studio-read th,
+.studio-read td {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--surface-card-border);
+  text-align: left;
+}
+
+.studio-read th {
+  background: var(--surface-metric-bg);
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+/* ── 淡滚动条（阅读面板 + 编辑面板）── */
+.studio-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface-card-border) transparent;
+}
+
+.studio-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.studio-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.studio-scroll::-webkit-scrollbar-thumb {
+  background: var(--surface-card-border);
+  border-radius: 3px;
+}
+
+.studio-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--surface-nav-hover-border);
+}
+
+/* ── 文档内搜索高亮（Ctrl+F）── */
+/* 跟随当前文档工作室预设主题色（--studio-link），与链接/强调色保持一致；
+   若不在 studio-root 内则 fallback 到全局场景 --theme-primary */
+.studio-read mark.studio-find {
+  background: color-mix(in srgb, var(--studio-link, var(--theme-primary)) 30%, transparent);
+  color: inherit;
+  border-radius: 2px;
+  padding: 0 1px;
+  transition: background-color 0.15s ease;
+}
+
+.studio-read mark.studio-find.is-current {
+  background: color-mix(in srgb, var(--studio-link, var(--theme-primary)) 55%, transparent);
+  outline: 1px solid color-mix(in srgb, var(--studio-link, var(--theme-primary)) 80%, transparent);
+  outline-offset: 1px;
+}
+
+/* 阅读面板文本选中：跟随文档工作室预设主题色，与 Ctrl+F 高亮一致 */
+.studio-read ::selection {
+  background: color-mix(in srgb, var(--studio-link, var(--theme-primary)) 28%, transparent);
+}

@@ -1,0 +1,101 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/.next-codex/
+/.next-codex-qa/
+/out/
+
+# codegraph
+/.codegraph/
+
+# production
+/build
+
+# turbo
+.turbo
+
+# misc
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.pem
+
+# debug / logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+*.log
+
+# local env files (只提交 .example，真实 key 不上传)
+.env
+.env*.local
+# OSS AccessKey 密钥文件（真实凭据，绝不提交）
+_oss-env.txt
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# database
+*.db
+*.sqlite
+*.sqlite3
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+Thumbs.db
+.DS_Store
+
+# REST client test files
+*.http
+
+# AI models (downloaded at runtime)
+/models/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Docker
+docker-compose.override.yml
+# Docker 镜像部署包（build 产物，~800MB，不提交）
+/app.tar.gz
+
+# 截图 / 临时图片
+image.png
+
+# 个人开发配置（本地保留，不上传开源）
+.claude/
+.trae/
+.mcp.json
+阿里云大语言模型.txt
+阿里云向量模型.txt
+DEPLOYMENT-NOTES.md
+txt文件/
+简历.html
