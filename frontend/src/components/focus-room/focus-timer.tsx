@@ -124,7 +124,7 @@ async function recordCompletedFocusSession(minutes: number, sessionId: string, s
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ durationMinutes: minutes, sessionId }),
     });
-    const result = await response.json().catch(() => null) as { ok?: boolean; recordId?: string; error?: string } | null;
+    const result = await response.json().catch(() => null) as { ok?: boolean; recordId?: string; energy?: number; error?: string } | null;
     if (!response.ok || result?.ok !== true) {
       console.error("[focus-session] backend rejected completed session", { status: response.status, error: result?.error });
       return;
@@ -134,6 +134,10 @@ async function recordCompletedFocusSession(minutes: number, sessionId: string, s
       recordId: result?.recordId,
       sessionId,
     });
+    // 通知植物农场卡片刷新能量（专注分钟 → 植物能量已到账）
+    window.dispatchEvent(
+      new CustomEvent("garden:focus-recorded", { detail: { energy: result.energy ?? minutes } })
+    );
   } catch (error) {
     console.error("[focus-session] failed to send completed session", error);
   }

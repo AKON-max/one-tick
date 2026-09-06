@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 from app.core.security import get_current_user
 from app.db.session import get_db
 from app.models.base import User
+from app.models.garden import Garden
 from app.models.study import StudyRecord
 
 router = APIRouter(prefix="/api/focus", tags=["focus"])
@@ -37,6 +38,14 @@ def record_focus_session(
     if not req.sessionId.startswith("focus-") or len(req.sessionId) > 100:
         raise HTTPException(status_code=400, detail="Invalid focus duration")
 
+    # 植物农场：每用户一行能量表（专注分钟自动累积）
+    garden = (
+        db.execute(select(Garden).where(Garden.userId == user.id)).scalars().first()
+    )
+    if garden is None:
+        garden = Garden(userId=user.id, energy=0)
+        db.add(garden)
+
     # 幂等去重：同一 sessionId 不重复记录
     existing = (
         db.execute(
@@ -54,6 +63,7 @@ def record_focus_session(
             "duplicate": True,
             "recordId": existing.id,
             "durationMinutes": req.durationMinutes,
+            "energy": garden.energy,
         }
 
     record = StudyRecord(
@@ -63,6 +73,10 @@ def record_focus_session(
         checkinId=req.sessionId,
     )
     db.add(record)
+
+    # 专注完成的分钟数自动累积为能量
+    garden.energy += req.durationMinutes
+
     db.commit()
     db.refresh(record)
     return {
@@ -70,4 +84,5 @@ def record_focus_session(
         "recordId": record.id,
         "durationMinutes": req.durationMinutes,
         "sessionId": req.sessionId,
+        "energy": garden.energy,
     }

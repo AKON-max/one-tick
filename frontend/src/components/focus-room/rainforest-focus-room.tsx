@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ArrowsOut } from "@phosphor-icons/react";
 import { PomodoroStation } from "./pomodoro-station";
 import { LocalTodoPanel } from "./local-todo-panel";
+import { PlantCard } from "../garden/plant-card";
 import { LongPressExit } from "./long-press-exit";
 import { randomQuote } from "@/lib/quotes";
 import { useScene, useSceneCopy } from "@/context/scene-context";
@@ -67,7 +68,9 @@ export function RainforestFocusRoom() {
         <div className="flex w-1/4 shrink-0 items-center px-2">
           <PomodoroStation onStart={enterImmersive} />
         </div>
-        <div className="flex-1" />
+        <div className="flex min-w-0 flex-1 items-center justify-center px-2">
+          <PlantCard />
+        </div>
         <div className="w-1/5 shrink-0 px-2">
           <LocalTodoPanel />
         </div>

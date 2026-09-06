@@ -32,6 +32,7 @@ from app.models.knowledge import (
     DocumentTemplate,
 )
 from app.models.misc import Notification, TokenUsage, AvatarChange
+from app.models.garden import Garden
 
 __all__ = [
     # base
@@ -67,4 +68,6 @@ __all__ = [
     "Notification",
     "TokenUsage",
     "AvatarChange",
+    # garden
+    "Garden",
 ]

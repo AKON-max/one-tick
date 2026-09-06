@@ -26,6 +26,7 @@ from app.routers import (
     oss,
     user,
     usage,
+    garden,
 )
 from app.ws import chat as ws_chat
 
@@ -72,5 +73,7 @@ app.include_router(knowledge.router)
 app.include_router(oss.router)
 app.include_router(user.router)
 app.include_router(usage.router)
+# ---- 植物农场 ----
+app.include_router(garden.router)
 # ---- WebSocket 聊天室（对应 server/index.ts 的 /ws）----
 app.include_router(ws_chat.router)
