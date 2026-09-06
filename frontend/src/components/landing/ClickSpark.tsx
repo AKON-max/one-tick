@@ -23,9 +23,9 @@ interface ClickSparkProps {
 
 /** 从 computedStyle 读 CSS --primary 作为默认火花色（跟随场景切换） */
 function readThemePrimary(): string {
-  if (typeof window === "undefined") return "#f59e0b";
-  const v = getComputedStyle(document.documentElement).getPropertyValue("--theme-primary") || getComputedStyle(document.documentElement).getPropertyValue("--primary");
-  return v || "#f59e0b";
+  if (typeof window === "undefined") return "#d7ef83";
+  const v = getComputedStyle(document.documentElement).getPropertyValue("--primary").trim();
+  return v || "#d7ef83";
 }
 
 export default function ClickSpark({

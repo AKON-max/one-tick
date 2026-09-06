@@ -29,11 +29,11 @@ const HIGHLIGHTS: SceneHighlight[] = [
   {
     id: "rain",
     icon: Leaf,
-    accent: "#f59e0b",
-    tagColor: "bg-[#f59e0b]/15 text-[#f59e0b]",
-    title: "琥珀场景",
-    subtitle: "暖橙氛围 · 深棕暖调",
-    slogan: "在暖光里沉浸，让每一段专注都有节奏。",
+    accent: "#d7ef83",
+    tagColor: "bg-[#d7ef83]/15 text-[#d7ef83]",
+    title: "雨林场景",
+    subtitle: "雨声白噪音 · 深墨绿调",
+    slogan: "在雨声中沉浸，让每一段专注都有节奏。",
   },
   {
     id: "snow",
