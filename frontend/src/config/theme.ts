@@ -40,11 +40,11 @@ export interface SceneThemeMeta {
 
 export const SCENE_THEMES: Record<SceneType, SceneThemeMeta> = {
   rain: {
-    label: "雨林",
-    primary: "#d7ef83",
-    primaryFg: "#051612",
-    chart: ["#d7ef83", "#c8b45a", "#d7ef83", "#e0886a", "#88b85a"],
-    overlayHint: "墨绿暗色蒙层，顶底暗、中部稍亮",
+    label: "琥珀",
+    primary: "#f59e0b",
+    primaryFg: "#1f1306",
+    chart: ["#f59e0b", "#fbbf24", "#e08a00", "#ffb63c", "#c97e08"],
+    overlayHint: "暖棕暗色蒙层，顶底暗、中部稍亮",
   },
   snow: {
     label: "雪日",

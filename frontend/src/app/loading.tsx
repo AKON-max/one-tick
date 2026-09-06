@@ -16,11 +16,11 @@ const loadingSteps = [
 export default function GlobalLoading() {
   return (
     <main className="global-loading relative flex min-h-[100dvh] items-center justify-center overflow-hidden px-6 py-12 text-foreground">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_36%,rgba(215,239,131,0.11),transparent_28%),linear-gradient(180deg,rgba(5,18,13,0.18),rgba(5,18,13,0.62))]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_36%,rgba(245,158,11,0.11),transparent_28%),linear-gradient(180deg,rgba(26,15,8,0.18),rgba(26,15,8,0.62))]" />
       <div className="pointer-events-none absolute left-1/2 top-[19%] h-px w-[min(72vw,720px)] -translate-x-1/2 bg-gradient-to-r from-transparent via-primary/35 to-transparent" />
 
       <section className="relative z-10 w-full max-w-[520px] text-center">
-        <div className="mx-auto flex size-16 items-center justify-center rounded-[22px] border border-primary/25 bg-primary/12 text-primary shadow-[0_0_0_8px_rgba(215,239,131,0.04),0_18px_55px_rgba(0,0,0,0.22)]">
+        <div className="mx-auto flex size-16 items-center justify-center rounded-[22px] border border-primary/25 bg-primary/12 text-primary shadow-[0_0_0_8px_rgba(245,158,11,0.05),0_18px_55px_rgba(0,0,0,0.22)]">
           <Leaf className="size-8" weight="fill" />
         </div>
 
@@ -45,7 +45,7 @@ export default function GlobalLoading() {
             <span className="text-primary/75">加载中</span>
           </div>
           <div className="h-1 overflow-hidden rounded-full bg-white/10">
-            <div className="h-full w-2/3 animate-[loading-progress_1.8s_ease-in-out_infinite] rounded-full bg-primary shadow-[0_0_18px_rgba(215,239,131,0.55)]" />
+            <div className="h-full w-2/3 animate-[loading-progress_1.8s_ease-in-out_infinite] rounded-full bg-primary shadow-[0_0_18px_rgba(245,158,11,0.55)]" />
           </div>
 
           <div className="mt-7 grid grid-cols-3 gap-2">
