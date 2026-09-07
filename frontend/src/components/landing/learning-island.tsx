@@ -265,23 +265,18 @@ const tiles: Tile[] = allTilesRaw.map(({ x, z }) => {
   const ez = z / (GRID_Z.max + 1);
   const distFromCenter = Math.hypot(ex, ez);
 
-  // 中心隆起 — 中间高、两边低
-  const centerPeak = Math.max(0, 1 - distFromCenter) * 1.6;
-  const centerRamp = Math.max(0, 1 - distFromCenter * 0.7) * 0.8;
+  // 平缓的中心隆起（低幅、低频）→ 地块之间高度差小，连成一片土地
+  const centerDome = Math.max(0, 1 - distFromCenter) * 0.9;
+  const rimRamp = Math.max(0, 1 - distFromCenter * 0.55) * 0.18;
 
-  // 多层噪声叠加
-  const n1 = noise2D(x, z, 0) * 0.4;
-  const n2 = noise2D(x, z, 5) * 0.35;
-  const n3 = Math.sin(x * 0.25 + z * 0.3) * Math.cos(z * 0.2 - x * 0.15) * 0.5;
-  const n4 = Math.abs(noise2D(x, z, 10)) * 0.4;
+  // 只用低频缓坡做起伏，避免相邻地块出现断层/悬崖
+  const n1 = noise2D(x, z, 0) * 0.13;
+  const n2 = noise2D(x, z, 5) * 0.11;
+  const n3 = Math.sin(x * 0.25 + z * 0.3) * Math.cos(z * 0.2 - x * 0.15) * 0.1;
+  const n4 = Math.abs(noise2D(x, z, 10)) * 0.07;
 
-  // 浮空
-  const floatChance = Math.abs(Math.sin(x * 0.7 + z * 0.9 + 2)) * Math.abs(Math.cos(z * 0.6 + x * 0.8));
-  const isFloating = floatChance > 0.72 && distFromCenter < 0.6; // 只在中心区域浮空
-  const floatBoost = isFloating ? 0.4 + Math.abs(noise2D(x, z, 15)) * 0.6 : 0;
-
-  // 合成海拔：中心峰值 + 噪声 + 浮空加成 - 边缘衰减
-  let rawElevation = centerPeak + centerRamp * 0.5 + n1 + n2 + n3 * 0.4 + n4 * 0.3 + floatBoost - distFromCenter * 0.3;
+  // 合成海拔：缓坡山丘，无浮空
+  let rawElevation = centerDome + rimRamp + n1 + n2 + n3 + n4 - distFromCenter * 0.08;
 
   // 村庄区域压平，让木屋露出来
   if (villageClearing.has(key)) {
@@ -291,13 +286,13 @@ const tiles: Tile[] = allTilesRaw.map(({ x, z }) => {
     rawElevation = rawElevation * 0.35 + 0.1;
   }
 
-  const elevation = kind === "water" ? rawElevation - 0.6
-    : kind === "river" || kind === "waterfall" ? rawElevation - 0.35
+  const elevation = kind === "water" ? rawElevation - 0.45
+    : kind === "river" || kind === "waterfall" ? rawElevation - 0.28
     : Math.round(rawElevation * 100) / 100;
 
-  // 柱体高度：中心区域更高
-  const baseHeight = 0.2 + Math.abs((x * 13 + z * 19 + 60) % 7) * 0.07 + (1 - distFromCenter) * 0.3;
-  const height = isFloating ? baseHeight + 0.15 : baseHeight;
+  // 柱体厚度基本统一：只留极轻微起伏，不再露出深色断崖
+  const baseHeight = 0.13 + Math.abs((x * 13 + z * 19 + 60) % 6) * 0.015;
+  const height = Math.round(baseHeight * 100) / 100;
 
   const delay = 0.02 + distFromCenter * 0.05;
 
@@ -646,7 +641,7 @@ function GrowingTile({
     : tile.kind === "moss" ? palette.mossTop
     : palette.forestTop;
 
-  const tileW = UNIT * 0.92;
+  const tileW = UNIT * 0.97;
 
   return (
     <group
@@ -719,7 +714,8 @@ function Island({
             : null;
         const hasTree = treeRank !== null && treeRank <= treeCount && isUnlocked;
         const isNewTree = hasTree && hasPlantedToday && treeRank === treeCount;
-        const isFloating = tile.elevation > 0.6;
+        // 地块固定在同一片大陆上，不做独立浮动（避免块间错位产生裂缝感）
+        const isFloating = false;
         return (
           <GrowingTile
             key={`${tile.x}-${tile.z}`}
