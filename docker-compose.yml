@@ -43,8 +43,9 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    expose:
-      - "8001"
+    # 本地运行 frontend/ 的 Next dev server 时，/api rewrites 需要访问宿主机 8001
+    ports:
+      - "8001:8001"
 
   web:
     # 前端（Next.js 纯 UI 层，位于 frontend/ 子目录）
