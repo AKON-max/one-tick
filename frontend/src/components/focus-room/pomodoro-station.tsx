@@ -16,14 +16,25 @@ export function PomodoroStation({
   const [focusMinutes, setFocusMinutes] = useState(25);
   const breakMinutes = 5;
 
+  if (immersive) {
+    return (
+      <FocusTimer
+        ref={timerRef}
+        focusMinutes={focusMinutes}
+        breakMinutes={breakMinutes}
+        onRestoreFocusMinutes={setFocusMinutes}
+        immersive
+      />
+    );
+  }
+
   return (
-    <div className="pomodoro-station flex w-full flex-col items-center">
-      <div className="focus-presets" aria-label="专注时长">
+    <div className="flex w-full flex-col items-center">
+      <div className="mb-2 flex items-center rounded-md border border-white/10 bg-black/10 p-1">
         {focusPresets.map((minutes) => (
           <button
             key={minutes}
             type="button"
-            aria-pressed={focusMinutes === minutes}
             onClick={() => setFocusMinutes(minutes)}
             className={
               focusMinutes === minutes
@@ -42,7 +53,6 @@ export function PomodoroStation({
           breakMinutes={breakMinutes}
           onRestoreFocusMinutes={setFocusMinutes}
           onStart={onStart}
-          immersive={immersive}
         />
       </div>
     </div>

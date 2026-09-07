@@ -25,6 +25,11 @@ interface FocusTimerProps {
   onStart?: () => void;
 }
 
+const RING_RADIUS = 108;
+const CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
+const SVG_SIZE = 260;
+const SVG_CENTER = SVG_SIZE / 2;
+
 const STORAGE_KEY = "pomodoro-state";
 
 interface TimerSnapshot {
@@ -390,16 +395,41 @@ export const FocusTimer = forwardRef<PomodoroHandle, FocusTimerProps>(function F
   }));
 
   const progress = totalSeconds > 0 ? 1 - remaining / totalSeconds : 0;
+  const dashOffset = CIRCUMFERENCE * (1 - progress);
   const displayMin = Math.floor(remaining / 60);
   const displaySec = remaining % 60;
   const timeDisplay = `${String(displayMin).padStart(2, "0")}:${String(displaySec).padStart(2, "0")}`;
 
+  if (immersive) {
+    return <span className="immersive-timer tabular-nums select-none cursor-default">{timeDisplay}</span>;
+  }
+
   return (
-    <div className={`focus-clock ${immersive ? "focus-clock--immersive" : ""}`}>
-      <span className="focus-clock-label">第 {round} 轮 · {mode === "focus" ? "专注时间" : "休息一下"}</span>
-      <span className="focus-clock-digits" role="timer" aria-label={`剩余 ${displayMin} 分 ${displaySec} 秒`}>{timeDisplay}</span>
-      <div className="focus-clock-progress" role="progressbar" aria-label="本轮进度" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress * 100)}><span style={{ width: `${progress * 100}%` }} /></div>
-      <div className="focus-clock-controls">
+    <div className="flex flex-col items-center">
+      <div className="relative">
+        <svg width={SVG_SIZE} height={SVG_SIZE} className="-rotate-90" viewBox={`0 0 ${SVG_SIZE} ${SVG_SIZE}`}>
+          <circle cx={SVG_CENTER} cy={SVG_CENTER} r={RING_RADIUS} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={5} />
+          <motion.circle cx={SVG_CENTER} cy={SVG_CENTER} r={RING_RADIUS}
+            fill="none" stroke="var(--theme-primary)" strokeWidth={5} strokeLinecap="round"
+            strokeDasharray={CIRCUMFERENCE}
+            initial={false}
+            animate={{ strokeDashoffset: dashOffset }}
+            transition={{ duration: 0.5, ease: "linear" }}
+            style={{ filter: "drop-shadow(0 0 12px color-mix(in srgb, var(--theme-primary) 50%, transparent))" }}
+          />
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <span className="mb-1.5 text-xs font-medium tracking-[0.15em] text-muted-foreground uppercase">
+            Round {round} · {mode === "focus" ? "专注" : "休息"}
+          </span>
+          <div className="flex items-baseline gap-0.5">
+            <span className="text-[3.5rem] font-extralight tabular-nums tracking-tighter text-foreground">
+              {timeDisplay}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div className="mt-8 flex items-center gap-5">
         <Tooltip>
           <TooltipTrigger render={
             <button onClick={reset}
@@ -416,7 +446,6 @@ export const FocusTimer = forwardRef<PomodoroHandle, FocusTimerProps>(function F
               if (isRunning) {
                 pause();
               } else if (!immersive && onStart) {
-                start();
                 onStart();
               } else {
                 start();

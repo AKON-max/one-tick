@@ -1,46 +1,80 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ArrowUpRight, ArrowsOut, ArrowsIn, BookOpen, Sparkle, Tree } from "@phosphor-icons/react";
+import { ArrowsOut } from "@phosphor-icons/react";
 import { PomodoroStation } from "./pomodoro-station";
 import { LocalTodoPanel } from "./local-todo-panel";
 import { PlantCard } from "../garden/plant-card";
-import { useScene } from "@/context/scene-context";
+import { LongPressExit } from "./long-press-exit";
+import { randomQuote } from "@/lib/quotes";
+import { useScene, useSceneCopy } from "@/context/scene-context";
 
 export function RainforestFocusRoom() {
   const [immersive, setImmersive] = useState(false);
-  const [date] = useState(() => new Intl.DateTimeFormat("zh-CN", { month: "long", day: "numeric", weekday: "long" }).format(new Date()));
-  const { scene, setScene } = useScene();
+  const { scene } = useScene();
+  const { roomTitle, roomSlogan } = useSceneCopy();
+  const [quote, setQuote] = useState(() => randomQuote(scene));
+
+  // 挂到 body 上复用 .rainforest-immersive 规则：隐藏顶部导航 / 悬浮球 / 环境音，并锁定滚动
   useEffect(() => {
-    document.body.classList.toggle("rainforest-immersive", immersive);
-    const exit = (event: KeyboardEvent) => { if (event.key === "Escape") setImmersive(false); };
-    window.addEventListener("keydown", exit);
-    return () => { document.body.classList.remove("rainforest-immersive"); window.removeEventListener("keydown", exit); };
+    if (immersive) document.body.classList.add("rainforest-immersive");
+    else document.body.classList.remove("rainforest-immersive");
+    return () => document.body.classList.remove("rainforest-immersive");
   }, [immersive]);
 
-  return <div className="daily-workspace">
-    <header className="daily-heading product-header">
-      <div><p className="daily-date">{date || "新的一天"}</p><h1>今天，慢慢来。</h1><p>把心思放在眼前这一件事上。</p></div>
-      <Link href="/plans" className="workspace-text-link">查看学习计划 <ArrowUpRight /></Link>
-    </header>
-    <div className="daily-grid">
-      <div className="daily-task-column"><LocalTodoPanel />
-        <div className="daily-shortcuts">
-          <Link href="/docs"><BookOpen weight="duotone" /><span><strong>接着读，接着想</strong><small>回到我的文档</small></span><ArrowUpRight /></Link>
-          <Link href="/agent"><Sparkle weight="duotone" /><span><strong>卡住了？一起想想</strong><small>与学习伙伴聊一聊</small></span><ArrowUpRight /></Link>
+  function enterImmersive() {
+    setQuote(randomQuote(scene));
+    // 沉浸覆盖层是透明的，进入前先让当前输入框失焦，避免页面光标的闪烁透过覆盖层显示
+    if (typeof document !== "undefined") {
+      (document.activeElement as HTMLElement | null)?.blur?.();
+    }
+    setImmersive(true);
+  }
+
+  if (immersive) {
+    return (
+      <div className="fixed inset-0 z-[60] flex select-none flex-col items-center justify-center px-6">
+        <PomodoroStation immersive />
+        <p className="mt-10 max-w-md cursor-default text-center text-sm font-light leading-relaxed tracking-wide text-primary/55">
+          「{quote}」
+        </p>
+        <LongPressExit onExit={() => setImmersive(false)} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-1 flex-col px-6 pt-8">
+      {/* 标题 */}
+      <header className="product-header shrink-0">
+        <div>
+          <p className="product-eyebrow">Deep focus</p>
+          <h1 className="product-title">{roomTitle}</h1>
+          <p className="product-subtitle">{roomSlogan}</p>
+        </div>
+        <button
+          type="button"
+          data-tour="focus-immersive"
+          onClick={enterImmersive}
+          className="flex shrink-0 items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/30 transition hover:scale-[1.03] hover:bg-primary/90 active:scale-95"
+        >
+          <ArrowsOut className="size-4" weight="bold" />
+          沉浸模式
+        </button>
+      </header>
+
+      {/* 三栏：番茄钟 | 背景 | 待办 */}
+      <div className="flex flex-1 items-center gap-0">
+        <div className="flex w-1/4 shrink-0 items-center px-2">
+          <PomodoroStation onStart={enterImmersive} />
+        </div>
+        <div className="flex min-w-0 flex-1 items-center justify-center px-2">
+          <PlantCard />
+        </div>
+        <div className="w-1/5 shrink-0 px-2">
+          <LocalTodoPanel />
         </div>
       </div>
-      <div className="daily-focus-column">
-        <section className={`focus-desk ${immersive ? "is-immersive" : ""}`} aria-label="专注计时" data-tour="focus-immersive">
-          <header><span className="focus-status"><i />留给自己的一刻</span><button className="workspace-icon" title={immersive ? "回到工作台" : "进入沉浸"} aria-label={immersive ? "回到工作台" : "进入沉浸"} onClick={() => setImmersive(!immersive)}>{immersive ? <ArrowsIn /> : <ArrowsOut />}</button></header>
-          <PomodoroStation immersive={immersive} onStart={() => setImmersive(true)} />
-          <div className="focus-scene-switch" aria-label="专注场景">{([{ id: "rain", name: "听雨" }, { id: "snow", name: "看雪" }, { id: "cloud", name: "望云" }] as const).map(item => <button key={item.id} aria-pressed={scene === item.id} onClick={() => setScene(item.id)}>{item.name}</button>)}</div>
-        </section>
-        <div className="daily-growth-heading"><Tree weight="duotone" /><h2>一点点，长成一片</h2><Link href="/checkin" title="查看我的小岛" aria-label="查看我的小岛"><ArrowUpRight /></Link></div>
-        <PlantCard />
-      </div>
     </div>
-    <footer className="daily-footer"><span>按自己的节奏，积累自己的答案。</span><Link href="/statistics">回看我的进步 <ArrowUpRight /></Link></footer>
-  </div>;
+  );
 }
