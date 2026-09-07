@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { requireAuth } from "@/lib/auth-utils";
 import { startOfYear, endOfYear, format, eachDayOfInterval } from "date-fns";
 import LearningIsland from "@/components/landing/learning-island-dynamic";
@@ -22,12 +23,16 @@ interface CheckinSummary {
 export default async function CheckinPage() {
   const user = await requireAuth();
   const now = new Date();
+  // 服务端请求必须携带登录 Cookie，否则后端 401 导致统计全部归零
+  const cookieStore = await cookies();
+  const sessionToken = cookieStore.get("session_token")?.value;
 
   // 一次拉取签到页全部聚合数据（对应原 7 次 Prisma 查询）
   let summary: CheckinSummary | null = null;
   try {
     const res = await fetch(`${API_INTERNAL_URL}/api/checkins/summary`, {
       cache: "no-store",
+      headers: sessionToken ? { Cookie: `session_token=${sessionToken}` } : undefined,
     });
     if (res.ok) summary = (await res.json()) as CheckinSummary;
   } catch {
