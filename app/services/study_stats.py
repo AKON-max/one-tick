@@ -11,6 +11,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.models.study import Checkin, Plan, PlanTask
+from app.models.garden import Garden
 
 
 def _day_start(d: datetime) -> datetime:
@@ -128,6 +129,13 @@ def build_checkin_summary(db: Session, user_id: str) -> dict:
             current_run = 0
         d += timedelta(days=1)
 
+    # 植物农场：小岛上的树 = 盆栽成熟收获次数（浇水成熟才 +1）
+    garden = (
+        db.execute(select(Garden).where(Garden.userId == user_id))
+        .scalars()
+        .first()
+    )
+
     return {
         "todayCheckin": today_checkin,
         "streak": streak,
@@ -136,4 +144,5 @@ def build_checkin_summary(db: Session, user_id: str) -> dict:
         "weekCheckins": week_checkins,
         "heatmap": heatmap,
         "longestStreak": longest_streak,
+        "maturedCount": garden.maturedCount if garden else 0,
     }

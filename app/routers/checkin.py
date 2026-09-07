@@ -124,6 +124,7 @@ class CheckinSummaryResponse(BaseModel):
     weekCheckins: int
     heatmap: list[dict]
     longestStreak: int
+    maturedCount: int = 0
 
     @classmethod
     def from_data(cls, d: dict) -> "CheckinSummaryResponse":

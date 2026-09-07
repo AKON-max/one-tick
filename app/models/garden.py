@@ -33,6 +33,9 @@ class Garden(Base):
     energy: Mapped[int] = mapped_column(Integer, default=0)
     # 浇水次数（驱动阶段进阶：stage = min(wateredCount, MAX_STAGE)）
     wateredCount: Mapped[int] = mapped_column(Integer, default=0)
+    # 成熟收获次数：每次“开花结果”后再浇水一次即收获，
+    # 小岛上的树 +1，盆栽回到种子重新长（见 routers/garden.py）
+    maturedCount: Mapped[int] = mapped_column(Integer, default=0)
     createdAt: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=_now
     )
@@ -42,13 +45,14 @@ class Garden(Base):
 
     @property
     def stage(self) -> int:
-        """当前造型阶段 0~4"""
+        """当前造型阶段 0~4（收获后会回到 0 重新种）"""
         return min(self.wateredCount, MAX_STAGE)
 
     def to_dict(self) -> dict:
         return {
             "energy": self.energy,
             "wateredCount": self.wateredCount,
+            "maturedCount": self.maturedCount,
             "stage": self.stage,
             "waterCost": WATER_COST,
             "maxStage": MAX_STAGE,

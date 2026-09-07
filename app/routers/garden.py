@@ -44,18 +44,16 @@ def water_plant(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """浇水：消耗 WATER_COST 能量，浇水次数 +1（原子防刷：能量不足不扣）"""
+    """浇水：消耗 WATER_COST 能量，浇水次数 +1（原子防刷：能量不足不扣）。
+    阶段 0→4 是生长过程；在“开花结果”(MAX_STAGE) 后再浇一次 = 收获：
+    maturedCount +1（小岛多一棵树），盆栽回到种子重新种。
+    """
     garden = _get_or_create(user.id, db)
 
     if garden.energy < WATER_COST:
         raise HTTPException(
             status_code=400,
             detail={"code": "INSUFFICIENT_ENERGY", "message": "能量不足，先专注攒能量吧"},
-        )
-    if garden.wateredCount >= MAX_STAGE:
-        raise HTTPException(
-            status_code=400,
-            detail={"code": "MAX_STAGE", "message": "植物已长到最高阶段啦"},
         )
 
     now = datetime.now(timezone.utc)
@@ -72,16 +70,20 @@ def water_plant(
     db.commit()
 
     if result.rowcount == 0:
-        db.refresh(garden)
-        if garden.wateredCount >= MAX_STAGE:
-            raise HTTPException(
-                status_code=400,
-                detail={"code": "MAX_STAGE", "message": "植物已长到最高阶段啦"},
-            )
         raise HTTPException(
             status_code=400,
             detail={"code": "INSUFFICIENT_ENERGY", "message": "能量不足，先专注攒能量吧"},
         )
 
     db.refresh(garden)
-    return {"ok": True, **garden.to_dict()}
+    harvested = False
+    if garden.wateredCount > MAX_STAGE:
+        # 超出最高造型的那次浇水 = 收获：树种到小岛，盆栽重新播种
+        garden.maturedCount += 1
+        garden.wateredCount = 0
+        garden.updatedAt = now
+        db.commit()
+        db.refresh(garden)
+        harvested = True
+
+    return {"ok": True, "harvested": harvested, **garden.to_dict()}

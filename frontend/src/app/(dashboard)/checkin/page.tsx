@@ -18,6 +18,8 @@ interface CheckinSummary {
   weekCheckins: number;
   heatmap: { date: string; checked: boolean }[];
   longestStreak: number;
+  /** 盆栽成熟收获次数 = 小岛上的树 */
+  maturedCount: number;
 }
 
 export default async function CheckinPage() {
@@ -45,6 +47,7 @@ export default async function CheckinPage() {
   const userTotalHours = summary?.totalHours ?? 0;
   const weekCheckins = summary?.weekCheckins ?? 0;
   const longestStreak = summary?.longestStreak ?? 0;
+  const maturedCount = summary?.maturedCount ?? 0;
 
   // 年度热力图（接口没返回时回退为空年视图）
   const yearStart = startOfYear(now);
@@ -70,6 +73,7 @@ export default async function CheckinPage() {
           streak={streak}
           totalHours={userTotalHours}
           todayCheckin={todayCheckin}
+          treeCount={maturedCount}
         />
       </div>
 

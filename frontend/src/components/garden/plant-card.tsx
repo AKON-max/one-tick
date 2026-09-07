@@ -2,27 +2,31 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Drop, Sparkle, Flower } from "@phosphor-icons/react";
+import { Drop, Sparkle, Tree } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 // ============================================================
 // 植物农场卡片：专注分钟 → 能量 → 手动浇水进阶
-// - 阶段 0~4 五种造型（种子/发芽/新叶/茁壮/开花结果）
-// - 每浇水一次消耗 25 分钟能量，植物进入下一造型
+// 盆栽长的是“树”，与 3D 小岛上的树同一造型语言：
+// - 阶段 0~4：种子/发芽/成苗/小树/成熟成树（第 4 段 = 岛树的样子）
+// - 每次浇水消耗 25 分钟能量，植物进入下一造型
+// - 成熟(第4段)后再浇一次 = 收获：盆栽回到种子，
+//   小岛上的树 +1（树的棵数 = maturedCount，见小岛接口）
 // - 专注会话完成（focus-timer 派发 garden:focus-recorded）后自动刷新
 // ============================================================
 
 interface GardenState {
   energy: number;
   wateredCount: number;
+  maturedCount: number;
   stage: number;
   waterCost: number;
   maxStage: number;
   updatedAt?: string | null;
 }
 
-const STAGE_LABELS = ["埋下种子", "破土发芽", "抽出新叶", "日渐茁壮", "开花结果"];
+const STAGE_LABELS = ["埋下种子", "破土发芽", "抽枝成苗", "枝叶渐丰", "成熟成树"];
 
 export function PlantCard() {
   const [garden, setGarden] = useState<GardenState | null>(null);
@@ -58,7 +62,7 @@ export function PlantCard() {
     try {
       const res = await fetch("/api/garden/water", { method: "POST" });
       const body = (await res.json().catch(() => null)) as
-        | (GardenState & { ok?: boolean })
+        | (GardenState & { ok?: boolean; harvested?: boolean })
         | { detail?: { code?: string; message?: string } }
         | null;
       if (!res.ok) {
@@ -68,9 +72,23 @@ export function PlantCard() {
         return;
       }
       if (body && "ok" in body && body.ok) {
-        const { energy, wateredCount, stage, waterCost, maxStage } = body;
-        setGarden({ energy, wateredCount, stage, waterCost, maxStage });
-        toast.success("浇过水啦，植物正在生长");
+        const { energy, stage, waterCost, maxStage, maturedCount, harvested } =
+          body as GardenState & { harvested?: boolean };
+        setGarden({
+          energy,
+          wateredCount: (body as GardenState).wateredCount ?? 0,
+          stage,
+          waterCost,
+          maxStage,
+          maturedCount,
+        });
+        if (harvested) {
+          toast.success("收获一棵树，小岛又多了一棵树！", {
+            icon: <Tree className="size-4" weight="fill" />,
+          });
+        } else {
+          toast.success("浇过水啦，小树正在长大");
+        }
       }
     } finally {
       setWatering(false);
@@ -86,13 +104,15 @@ export function PlantCard() {
     );
   }
 
-  const { energy, wateredCount, stage, waterCost, maxStage } = garden;
+  const { energy, wateredCount, stage, waterCost, maxStage, maturedCount } = garden;
   const maxed = stage >= maxStage;
-  // 距下次浇水的进度（能量可累积，满 1 即可浇水）
-  const progress = maxed ? 1 : Math.min(energy / waterCost, 1);
-  const needMore = !maxed && energy < waterCost;
+  // 距下次浇水的进度（能量可累积，满 1 即可浇水/收获）
+  const progress = Math.min(energy / waterCost, 1);
+  const needMore = energy < waterCost;
   const hint = maxed
-    ? "植物已经开花结果，这一株圆满了"
+    ? needMore
+      ? `再专注 ${waterCost - energy} 分钟即可收获成树`
+      : "再浇一次水，把这棵树种到小岛上去"
     : needMore
       ? `再专注 ${waterCost - energy} 分钟即可浇水`
       : "消耗 25 分钟能量，浇一次水";
@@ -105,10 +125,10 @@ export function PlantCard() {
       <header className="relative flex items-center justify-between px-4 pb-3 pt-4">
         <div className="flex min-w-0 items-center gap-2.5">
           <div className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-primary/15 bg-primary/10 text-primary">
-            <Flower className="size-4" weight="duotone" />
+            <Tree className="size-4" weight="duotone" />
           </div>
           <div className="min-w-0 leading-tight">
-            <h3 className="truncate text-[13px] font-semibold text-foreground">我的植物</h3>
+            <h3 className="truncate text-[13px] font-semibold text-foreground">我的树</h3>
             <p className="mt-1 text-[10px] text-muted-foreground/65">{STAGE_LABELS[stage]}</p>
           </div>
         </div>
@@ -121,7 +141,7 @@ export function PlantCard() {
         </div>
       </header>
 
-      {/* 植物造型（阶段切换时播放生长动画） */}
+      {/* 树的造型（阶段切换时播放生长动画） */}
       <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
@@ -138,7 +158,7 @@ export function PlantCard() {
       </div>
 
       {/* 阶段点 */}
-      <div className="flex items-center justify-center gap-1.5 pb-3">
+      <div className="flex items-center justify-center gap-1.5 pb-2">
         {Array.from({ length: maxStage + 1 }).map((_, i) => (
           <span
             key={i}
@@ -150,10 +170,22 @@ export function PlantCard() {
         ))}
       </div>
 
-      {/* 浇水区 */}
+      {/* 已种到小岛的树（与 3D 小岛联动） */}
+      <div className="flex items-center justify-center gap-1.5 pb-3 text-[11px] text-muted-foreground/70">
+        <Tree className="size-3.5" weight="duotone" />
+        <span>
+          已种到小岛 <span className="font-semibold tabular-nums text-foreground/85">{maturedCount}</span> 棵
+        </span>
+      </div>
+
+      {/* 浇水/收获区 */}
       <div className="border-t border-white/[0.07] px-4 pb-4 pt-3">
         <div className="flex items-center justify-between text-[10px] text-muted-foreground/60">
-          <span>{maxed ? "生长完成" : `第 ${stage + 1} 段 · 还需 ${needMore ? waterCost - energy : 0} 分钟`}</span>
+          <span>
+            {maxed
+              ? `已成熟 · 第 ${stage + 1} 段`
+              : `第 ${stage + 1} 段 · 还需 ${needMore ? waterCost - energy : 0} 分钟`}
+          </span>
           <span className="tabular-nums">{Math.round(progress * 100)}%</span>
         </div>
         <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white/8">
@@ -166,10 +198,10 @@ export function PlantCard() {
         <button
           type="button"
           onClick={handleWater}
-          disabled={maxed || needMore || watering}
+          disabled={needMore || watering}
           className={cn(
             "mt-3.5 flex w-full items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold transition-all",
-            maxed || needMore || watering
+            needMore || watering
               ? "cursor-not-allowed bg-white/[0.05] text-muted-foreground/50"
               : "bg-primary text-primary-foreground shadow-lg shadow-primary/25 hover:scale-[1.02] hover:bg-primary/90 active:scale-95"
           )}
@@ -177,12 +209,12 @@ export function PlantCard() {
           {maxed ? (
             <>
               <Sparkle className="size-4" weight="duotone" />
-              已经圆满
+              收获成树 · 种到小岛
             </>
           ) : (
             <>
               <Drop className="size-4" weight="bold" />
-              {needMore ? "浇水" : "浇水 · 让它长大"}
+              浇水 · 让它长大
             </>
           )}
         </button>
@@ -193,161 +225,148 @@ export function PlantCard() {
 }
 
 // ============================================================
-// 五种造型（0 种子 → 4 开花结果）
+// 树的造型：0 种子 → 4 成熟成树（第 4 段 = 3D 小岛上那棵树的造型）
+// 低多边形树冠 + 褐色树干，与小岛 TinyTree 同一语言
 // ============================================================
+
+const TRUNK = "#6b5a3e"; // 与岛树树皮一致
+const LEAF_DARK = "#4d9e6a";
+const LEAF_MID = "#5ead78";
+const LEAF_LIGHT = "#6dbf8a";
+const LEAF_HI = "#82cf9d";
 
 function PlantArt({ stage }: { stage: number }) {
   return (
     <svg
       width="210"
       height="250"
-      viewBox="0 0 220 260"
+      viewBox="0 0 220 270"
       fill="none"
       className="select-none"
       role="img"
       aria-label={STAGE_LABELS[stage]}
     >
-      {/* 土壤 */}
-      <g>
-        <ellipse cx="110" cy="236" rx="86" ry="18" fill="#6b4423" />
-        <ellipse cx="110" cy="232" rx="86" ry="16" fill="#8a5a33" />
-        <ellipse cx="110" cy="228" rx="62" ry="11" fill="#9d6a3f" />
-        {/* 小碎石光点 */}
-        <circle cx="72" cy="231" r="1.6" fill="#c08a55" opacity="0.8" />
-        <circle cx="150" cy="234" r="1.4" fill="#c08a55" opacity="0.7" />
-        <circle cx="118" cy="238" r="1.2" fill="#c08a55" opacity="0.6" />
-      </g>
+      {/* 陶盆 + 泥土 */}
+      <Pot />
 
       {stage === 0 && (
         <g>
-          {/* 刚埋下的种子：浅土里拱起一个小丘 */}
-          <ellipse cx="110" cy="222" rx="16" ry="7" fill="#7a4f2c" />
-          <ellipse cx="110" cy="219" rx="10" ry="5" fill="#a8743f" />
-          <ellipse cx="110" cy="217" rx="6" ry="4" fill="#e7c98f" />
+          {/* 埋下的种子：土里拱起一个小丘 */}
+          <ellipse cx="110" cy="206" rx="20" ry="9" fill="#7a4f2c" />
+          <ellipse cx="110" cy="202" rx="12" ry="6" fill="#a8743f" />
+          <ellipse cx="110" cy="200" rx="7" ry="4.5" fill="#e7c98f" />
         </g>
       )}
 
       {stage === 1 && (
         <g>
-          {/* 破土发芽 */}
-          <path d="M110 224 C110 214 110 206 110 198" stroke="#34a853" strokeWidth="5" strokeLinecap="round" />
-          <path d="M110 204 C102 196 94 196 90 200 C96 206 104 206 110 202" fill="#67d18a" />
-          <path d="M110 198 C118 190 126 190 130 194 C124 200 116 200 110 196" fill="#4cbf6f" />
+          {/* 破土发芽：嫩茎 + 两片小芽 */}
+          <path
+            d="M110 208 C110 196 110 188 110 180"
+            stroke="#45bd68"
+            strokeWidth="4"
+            strokeLinecap="round"
+          />
+          <path d="M110 188 C103 181 95 181 92 184.5 C98 190 105 190 110 186" fill="#67d18a" />
+          <path d="M110 182 C117 175 125 175 128 178.5 C122 184 115 184 110 180" fill="#4cbf6f" />
         </g>
       )}
 
       {stage === 2 && (
         <g>
-          {/* 抽出新叶：主干长高 + 四片叶 */}
-          <path d="M110 226 C110 206 110 194 110 180" stroke="#34a853" strokeWidth="6" strokeLinecap="round" />
-          <Leaf tip={[60, 196]} dir={-1} />
-          <Leaf tip={[160, 196]} dir={1} />
-          <Leaf tip={[78, 172]} dir={-1} small />
-          <Leaf tip={[142, 172]} dir={1} small />
-          <path d="M110 180 C110 172 110 168 110 164" stroke="#34a853" strokeWidth="5" strokeLinecap="round" />
-          <Leaf tip={[110, 152]} dir={0} />
+          {/* 抽枝成苗：笔直小树干 + 迷你树冠 */}
+          <TreeTrunk top={172} base={208} wTop={2.4} wBase={6.5} />
+          <TreeCrown cx={110} cy={160} R={15} />
         </g>
       )}
 
       {stage === 3 && (
         <g>
-          {/* 日渐茁壮：主茎更高、六片叶 + 花苞 */}
-          <path d="M110 228 C110 204 110 190 110 168" stroke="#2f9e54" strokeWidth="7" strokeLinecap="round" />
-          <Leaf tip={[56, 202]} dir={-1} />
-          <Leaf tip={[164, 202]} dir={1} />
-          <Leaf tip={[72, 178]} dir={-1} small />
-          <Leaf tip={[148, 178]} dir={1} small />
-          <Leaf tip={[86, 156]} dir={-1} small />
-          <Leaf tip={[134, 156]} dir={1} small />
-          <path d="M110 168 C110 158 110 152 110 146" stroke="#2f9e54" strokeWidth="5" strokeLinecap="round" />
-          <Bud cx={110} cy={142} />
+          {/* 枝叶渐丰：树干长高，树冠更大 */}
+          <TreeTrunk top={150} base={208} wTop={3} wBase={9} />
+          <TreeCrown cx={110} cy={140} R={25} />
         </g>
       )}
 
       {stage === 4 && (
         <g>
-          {/* 开花结果：花冠展开 + 两片大叶托底 */}
-          <path d="M110 230 C110 206 110 190 110 166" stroke="#2f9e54" strokeWidth="8" strokeLinecap="round" />
-          <Leaf tip={[50, 200]} dir={-1} />
-          <Leaf tip={[170, 200]} dir={1} />
-          <Leaf tip={[78, 172]} dir={-1} small />
-          <Leaf tip={[142, 172]} dir={1} small />
-          <path d="M110 166 C110 156 110 150 110 146" stroke="#2f9e54" strokeWidth="6" strokeLinecap="round" />
-          <FlowerBlossom cx={110} cy={140} />
+          {/* 成熟成树：与 3D 小岛上的树一致的低多边形大树 */}
+          <TreeTrunk top={126} base={208} wTop={3.5} wBase={12} />
+          <TreeCrown cx={110} cy={116} R={36} />
         </g>
       )}
     </svg>
   );
 }
 
-/** 一片叶子：tip 为叶尖坐标，dir -1 向左倾 / 1 向右倾 / 0 竖直朝上 */
-function Leaf({
-  tip,
-  dir,
-  small = false,
+/** 陶盆 + 盆内泥土（底部固定，树从土里长出来） */
+function Pot() {
+  return (
+    <g>
+      {/* 盆身 */}
+      <path d="M52 226 L82 262 L138 262 L168 226 L168 220 L52 220 Z" fill="#c47a4a" />
+      {/* 盆身阴影 */}
+      <path d="M52 220 L82 262 L102 262 L64 220 Z" fill="#b06a3e" opacity="0.85" />
+      {/* 盆沿 */}
+      <rect x="46" y="212" width="128" height="15" rx="7" fill="#d08a56" />
+      {/* 盆沿高光 */}
+      <rect x="52" y="214" width="116" height="4" rx="2" fill="#e09a64" opacity="0.9" />
+      {/* 泥土 */}
+      <ellipse cx="110" cy="212" rx="58" ry="9" fill="#5b3d21" />
+      <ellipse cx="110" cy="209" rx="44" ry="6" fill="#6b4423" />
+      {/* 小碎石光点 */}
+      <circle cx="86" cy="211" r="1.5" fill="#8a5a33" opacity="0.8" />
+      <circle cx="136" cy="213" r="1.3" fill="#8a5a33" opacity="0.7" />
+    </g>
+  );
+}
+
+/** 树干：上细下粗的褐色梯形（岛树风格） */
+function TreeTrunk({
+  top,
+  base,
+  wTop,
+  wBase,
 }: {
-  tip: [number, number];
-  dir: -1 | 0 | 1;
-  small?: boolean;
+  top: number;
+  base: number;
+  wTop: number;
+  wBase: number;
 }) {
-  const [x, y] = tip;
-  const s = small ? 0.8 : 1;
-  const hue = dir === 1 ? "#5ecf7e" : dir === -1 ? "#45bd68" : "#71dd90";
-  if (dir === 0) {
-    // 顶部嫩芽：朝上的小叶子
-    return (
-      <g transform={`translate(${x} ${y}) scale(${s})`}>
-        <path d="M0 14 C-8 6 -8 -2 0 -8 C8 -2 8 6 0 14 Z" fill={hue} />
-      </g>
-    );
+  return (
+    <g>
+      <polygon
+        points={`${110 - wBase / 2},${base} ${110 + wBase / 2},${base} ${110 + wTop / 2},${top} ${110 - wTop / 2},${top}`}
+        fill={TRUNK}
+      />
+      {/* 树干右侧阴影，增加圆柱感 */}
+      <polygon
+        points={`${110},${base} ${110 + wBase / 2},${base} ${110 + wTop / 2},${top} ${110},${top}`}
+        fill="#00000022"
+      />
+    </g>
+  );
+}
+
+/** 一块低多边形树冠叶片：不规则 6 边形，模拟 3D icosahedron 的切面 */
+function CrownBlob({ cx, cy, r, color }: { cx: number; cy: number; r: number; color: string }) {
+  const pts: string[] = [];
+  for (let i = 0; i < 6; i++) {
+    const angle = (i / 6) * Math.PI * 2 + (i % 3) * 0.38 + 0.6;
+    const rad = r * (1 + Math.sin(i * 1.9 + cx * 0.03) * 0.18);
+    pts.push(`${(cx + Math.cos(angle) * rad).toFixed(1)},${(cy + Math.sin(angle) * rad).toFixed(1)}`);
   }
-  const flip = dir === 1 ? "scale(-1 1)" : "";
-  return (
-    <g transform={`translate(${x} ${y}) scale(${s})`}>
-      <g transform={`rotate(${dir === 1 ? -24 : 24}) ${flip}`}>
-        <path d="M0 0 C-10 -2 -16 6 -12 18 C-6 14 0 8 0 0 Z" fill={hue} />
-        <path d="M0 0 C-8 6 -10 14 -8 22" stroke="#2f9e54" strokeWidth="1.4" strokeLinecap="round" fill="none" />
-      </g>
-    </g>
-  );
+  return <polygon points={pts.join(" ")} fill={color} />;
 }
 
-/** 花苞 */
-function Bud({ cx, cy }: { cx: number; cy: number }) {
+/** 树冠：4 片错落的低多边形叶簇（颜色与 3D 小岛 TinyTree 一致） */
+function TreeCrown({ cx, cy, R }: { cx: number; cy: number; R: number }) {
   return (
     <g>
-      <ellipse cx={cx} cy={cy - 6} rx="7" ry="11" fill="#7ee2a0" />
-      <ellipse cx={cx - 6} cy={cy - 2} rx="5" ry="8" fill="#67d18a" transform={`rotate(-24 ${cx - 6} ${cy - 2})`} />
-      <ellipse cx={cx + 6} cy={cy - 2} rx="5" ry="8" fill="#67d18a" transform={`rotate(24 ${cx + 6} ${cy - 2})`} />
-    </g>
-  );
-}
-
-/** 盛开的花 */
-function FlowerBlossom({ cx, cy }: { cx: number; cy: number }) {
-  const petals = [
-    [0, -17],
-    [15, -8],
-    [11, 10],
-    [-11, 10],
-    [-15, -8],
-  ];
-  return (
-    <g>
-      {petals.map(([dx, dy], i) => (
-        <ellipse
-          key={i}
-          cx={cx + dx}
-          cy={cy + dy}
-          rx="8.5"
-          ry="11"
-          fill="#fb923c"
-          opacity="0.95"
-          transform={`rotate(${i * 72 - 90} ${cx + dx} ${cy + dy})`}
-        />
-      ))}
-      <circle cx={cx} cy={cy} r="7" fill="#fde047" />
-      <circle cx={cx - 2} cy={cy - 2} r="2" fill="#fef3c7" opacity="0.9" />
+      <CrownBlob cx={cx - R * 0.46} cy={cy + R * 0.22} r={R * 0.42} color={LEAF_DARK} />
+      <CrownBlob cx={cx + R * 0.46} cy={cy + R * 0.2} r={R * 0.4} color={LEAF_MID} />
+      <CrownBlob cx={cx + R * 0.1} cy={cy - R * 0.4} r={R * 0.4} color={LEAF_HI} />
+      <CrownBlob cx={cx} cy={cy} r={R * 0.62} color={LEAF_LIGHT} />
     </g>
   );
 }
