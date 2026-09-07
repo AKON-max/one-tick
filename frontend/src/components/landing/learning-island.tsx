@@ -314,6 +314,20 @@ const tiles: Tile[] = allTilesRaw.map(({ x, z }) => {
 
 const totalTiles = tiles.length;
 
+// ── 种树位：forest 地块按“离岛心由近及远”稳定排序 ──
+// 树的棵数 = 打卡天数；第 k 天种的树落在第 k 个种树位上（近处先种，向外扩散）
+const forestSlots = tiles
+  .filter((t) => t.kind === "forest")
+  .sort(
+    (a, b) =>
+      (Math.hypot(a.x, a.z) - Math.hypot(b.x, b.z)) ||
+      a.x - b.x ||
+      a.z - b.z
+  );
+const forestSlotOf = new Map(
+  forestSlots.map((t, i) => [`${t.x},${t.z}`, i + 1])
+);
+
 // ============================================================
 // ── 装饰组件（按新比例缩小） ──
 // ============================================================
@@ -560,7 +574,15 @@ function TinyPond({ variant }: { variant: number }) {
   );
 }
 
-function TileDecoration({ tile, index }: { tile: Tile; index: number }) {
+function TileDecoration({
+  tile,
+  index,
+  hasTree,
+}: {
+  tile: Tile;
+  index: number;
+  hasTree: boolean;
+}) {
   const { kind } = tile;
   if (kind === "rock") return <TinyRock variant={index} />;
   if (kind === "water") return <TinyPond variant={index} />;
@@ -571,7 +593,8 @@ function TileDecoration({ tile, index }: { tile: Tile; index: number }) {
     if ((tile.x * 7 + tile.z * 11 + 30) % 3 !== 0) return <TinyFern variant={index} />;
     return null;
   }
-  // forest
+  // forest：只在“种树位 ≤ 打卡天数”的地块上长出树，其余留作草地
+  if (!hasTree) return null;
   return <TinyTree variant={index} />;
 }
 
@@ -584,14 +607,16 @@ function GrowingTile({
   index,
   reducedMotion,
   isUnlocked,
-  isTodayNew,
+  hasTree,
+  isNewTree,
   isFloating,
 }: {
   tile: Tile;
   index: number;
   reducedMotion: boolean;
   isUnlocked: boolean;
-  isTodayNew: boolean;
+  hasTree: boolean;
+  isNewTree: boolean;
   isFloating: boolean;
 }) {
   const palette = usePalette();
@@ -648,10 +673,10 @@ function GrowingTile({
       </mesh>
       {/* 装饰 */}
       <group position={[0, tile.height + 0.04, 0]}>
-        <TileDecoration tile={tile} index={index} />
+        <TileDecoration tile={tile} index={index} hasTree={hasTree} />
       </group>
-      {/* 今日标记 */}
-      {isTodayNew && (
+      {/* 今日新种的树：星光点缀 */}
+      {isNewTree && (
         <group position={[0, tile.height + 0.22, 0]}>
           <NewTileSparkle color="#fff9c4" />
         </group>
@@ -664,7 +689,15 @@ function GrowingTile({
 // ── 主岛 ──
 // ============================================================
 
-function Island({ unlockedCount, todayCount }: { unlockedCount: number; todayCount: number }) {
+function Island({
+  unlockedCount,
+  treeCount,
+  todayCheckin,
+}: {
+  unlockedCount: number;
+  treeCount: number;
+  todayCheckin: boolean;
+}) {
   const island = useRef<Group>(null);
   const reducedMotion = useReducedMotion();
 
@@ -673,13 +706,19 @@ function Island({ unlockedCount, todayCount }: { unlockedCount: number; todayCou
     island.current.position.y = Math.sin(state.clock.elapsedTime * 0.55) * 0.025;
   });
 
-  const todayStartOrder = Math.max(1, unlockedCount - todayCount + 1);
+  // 今天种下的树 = 第 treeCount 棵（仅当今天来打卡时点亮）
+  const hasPlantedToday = todayCheckin && treeCount > 0;
 
   return (
     <group ref={island} rotation={[0, -0.18, 0]}>
       {tiles.map((tile, index) => {
         const isUnlocked = tile.unlockOrder <= unlockedCount;
-        const isTodayNew = todayCount > 0 && tile.unlockOrder >= todayStartOrder && tile.unlockOrder <= unlockedCount;
+        const treeRank =
+          tile.kind === "forest"
+            ? (forestSlotOf.get(`${tile.x},${tile.z}`) ?? null)
+            : null;
+        const hasTree = treeRank !== null && treeRank <= treeCount && isUnlocked;
+        const isNewTree = hasTree && hasPlantedToday && treeRank === treeCount;
         const isFloating = tile.elevation > 0.6;
         return (
           <GrowingTile
@@ -688,7 +727,8 @@ function Island({ unlockedCount, todayCount }: { unlockedCount: number; todayCou
             index={index}
             reducedMotion={reducedMotion}
             isUnlocked={isUnlocked}
-            isTodayNew={isTodayNew}
+            hasTree={hasTree}
+            isNewTree={isNewTree}
             isFloating={isFloating}
           />
         );
@@ -720,16 +760,19 @@ type LearningIslandProps = {
   totalCheckins?: number;
   streak?: number;
   totalHours?: number;
-  todayCheckins?: number;
+  /** 今天是否已打卡（决定“今日新树”星光） */
+  todayCheckin?: boolean;
 };
 
 export function LearningIsland({
   totalCheckins = 0,
   streak = 0,
   totalHours = 0,
-  todayCheckins = 0,
+  todayCheckin = false,
 }: LearningIslandProps) {
   const unlockedCount = Math.min(totalTiles, INITIAL_TILES + totalCheckins * TILES_PER_CHECKIN);
+  // 岛上的树 = 打卡天数（从 0 棵开始，每天来打卡就多种一棵）
+  const treeCount = Math.min(totalCheckins, forestSlots.length);
 
   // ── 场景 → PALETTE：自动跟随 html[data-scene] 切换 ──
   const [palette, setPalette] = useState<ScenePalette>(() => paletteForScene(readSceneFromDOM()));
@@ -754,7 +797,7 @@ export function LearningIsland({
       <div
         className="relative h-full w-full touch-none"
         role="img"
-        aria-label={`小岛，累计 ${totalCheckins} 次打卡，连续 ${streak} 天，学习 ${Math.round(totalHours * 10) / 10} 小时`}
+        aria-label={`小岛：种下了 ${treeCount} 棵树，累计 ${totalCheckins} 天来打卡，连续 ${streak} 天，学习 ${Math.round(totalHours * 10) / 10} 小时`}
       >
         <Canvas
           dpr={[1, 1.65]}
@@ -777,7 +820,7 @@ export function LearningIsland({
             shadow-camera-top={8}
             shadow-camera-bottom={-8}
           />
-          <Island unlockedCount={unlockedCount} todayCount={todayCheckins} />
+          <Island unlockedCount={unlockedCount} treeCount={treeCount} todayCheckin={todayCheckin} />
           <ContactShadows
             position={[0, -1.2, 0]}
             opacity={0.35}

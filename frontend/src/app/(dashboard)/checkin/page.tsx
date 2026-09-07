@@ -38,7 +38,6 @@ export default async function CheckinPage() {
   const streak = summary?.streak ?? 0;
   const totalCheckins = summary?.totalCheckins ?? 0;
   const userTotalHours = summary?.totalHours ?? 0;
-  const todayCheckins = todayCheckin ? 5 : 0;
   const weekCheckins = summary?.weekCheckins ?? 0;
   const longestStreak = summary?.longestStreak ?? 0;
 
@@ -65,7 +64,7 @@ export default async function CheckinPage() {
           totalCheckins={totalCheckins}
           streak={streak}
           totalHours={userTotalHours}
-          todayCheckins={todayCheckins}
+          todayCheckin={todayCheckin}
         />
       </div>
 
