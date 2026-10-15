@@ -46,11 +46,5 @@ summer-checkin-master/
 .coverage
 htmlcov/
 
-# Local-only interview, portfolio, and delivery material
-/portfolio/
-/architecture/
-/HANDOFF.local.md
-/e2e-st.txt
-/One-Tick项目面试讲解稿*.md
-/面试知识库_OneTick*.md
-/简历技术概念面试讲解手册.md
+# Local-only working material (notes, drafts, private assets)
+/_local/
