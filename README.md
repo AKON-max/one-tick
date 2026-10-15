@@ -63,11 +63,12 @@ app/
 
 ## 架构图
 
-![One-Tick runtime architecture](architecture/one-tick.architecture.png)
+![One-Tick runtime architecture](docs/architecture/overview.png)
 
-- 交互式架构图：[`architecture/one-tick.architecture.html`](architecture/one-tick.architecture.html)
-- 架构源文件：[`architecture/one-tick.architecture.json`](architecture/one-tick.architecture.json)
-- 维护交接：[`HANDOFF.md`](HANDOFF.md)
+- 交互式架构图：[`docs/architecture/overview.html`](docs/architecture/overview.html)
+- 架构源文件：[`docs/architecture/overview.json`](docs/architecture/overview.json)
+- 维护交接：[docs/operations/maintenance-log.md](docs/operations/maintenance-log.md)
+- 产品案例：[docs/product/case-study.md](docs/product/case-study.md)
 
 ## AI 交互开发
 
