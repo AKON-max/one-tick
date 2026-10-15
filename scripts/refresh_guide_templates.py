@@ -8,7 +8,7 @@
 # 计划文档里的「## 任务安排」段落新旧一致，所以任务列表不会因此失效，无需重新同步任务。
 #
 # 跑法（scripts/ 在 .dockerignore 里，镜像内没有本文件，必须先拷进去）：
-#   docker cp scripts/refresh_guide_templates.py python-checkin-app-1:/app/refresh_guide_templates.py
+#   docker cp scripts/refresh_guide_templates.py one-tick-app-1:/app/refresh_guide_templates.py
 #   docker compose exec -T app python refresh_guide_templates.py
 import sys
 from pathlib import Path

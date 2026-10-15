@@ -8,7 +8,7 @@
 #
 # 用法（app 容器内，只跑检索、不调 LLM，秒级出结果）：
 #   docker compose run --rm \
-#     -v D:/python-checkin/scripts/rag_eval:/eval \
+#     -v D:/one-tick/scripts/rag_eval:/eval \
 #     -e PYTHONPATH=/app/vendor:/app \
 #     app python /eval/eval_rag.py --out /eval/metrics.json
 #

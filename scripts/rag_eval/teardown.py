@@ -6,7 +6,7 @@
 # 其余关联表（会话、记忆、用量等）由 ON DELETE CASCADE 兜底。
 #
 # 用法（app 容器内）：
-#   docker compose run --rm -v D:/python-checkin/scripts/rag_eval:/eval \
+#   docker compose run --rm -v D:/one-tick/scripts/rag_eval:/eval \
 #     -e PYTHONPATH=/app/vendor:/app app python /eval/teardown.py
 # ============================================================
 

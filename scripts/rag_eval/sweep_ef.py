@@ -13,7 +13,7 @@
 #
 # 用法：
 #   docker compose run --rm \
-#     -v D:/python-checkin/scripts/rag_eval:/eval \
+#     -v D:/one-tick/scripts/rag_eval:/eval \
 #     -e PYTHONPATH=/app/vendor:/app \
 #     app python /eval/sweep_ef.py
 # ============================================================

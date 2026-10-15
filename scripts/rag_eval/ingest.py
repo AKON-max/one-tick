@@ -7,7 +7,7 @@
 # 用法（在 app 容器内执行，无需重建镜像）：
 #   docker compose run --rm \
 #     -v D:/rag-corpus:/corpus \
-#     -v D:/python-checkin/scripts/rag_eval:/eval \
+#     -v D:/one-tick/scripts/rag_eval:/eval \
 #     -e PYTHONPATH=/app/vendor:/app \
 #     app python /eval/ingest.py /corpus --reset
 #

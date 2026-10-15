@@ -8,7 +8,7 @@
 #
 # 用法（app 容器内，会真实消耗 token）：
 #   docker compose run --rm \
-#     -v D:/python-checkin/scripts/rag_eval:/eval \
+#     -v D:/one-tick/scripts/rag_eval:/eval \
 #     -e PYTHONPATH=/app/vendor:/app \
 #     app python /eval/eval_e2e.py --limit 20 --out /eval/metrics_e2e.json
 # ============================================================

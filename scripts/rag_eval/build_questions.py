@@ -16,7 +16,7 @@
 #
 # 用法（app 容器内）：
 #   docker compose run --rm \
-#     -v D:/python-checkin/scripts/rag_eval:/eval \
+#     -v D:/one-tick/scripts/rag_eval:/eval \
 #     -e PYTHONPATH=/app/vendor:/app \
 #     app python /eval/build_questions.py --count 40 --unanswerable 10
 # ============================================================

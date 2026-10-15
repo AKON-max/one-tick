@@ -4,7 +4,7 @@
 > 每一步的实际命令、踩过的坑、以及原始数据。目的有二：一是作品集里那页数据的出处，
 > 二是面试被追问细节时能逐条复述。
 >
-> 本地路径：`D:\python-checkin`　评测脚本：`scripts/rag_eval/`
+> 本地路径：`D:\one-tick`　评测脚本：`scripts/rag_eval/`
 
 ---
 
@@ -276,8 +276,8 @@ docker compose exec -T db psql -U postgres -d python_checkin `
 
 # 1) 灌语料（断点续跑，可反复执行）
 docker compose run -d --name ingest `
-  -v D:/python-checkin/scripts/rag_eval:/eval `
-  -v D:/python-checkin/app:/app/app `
+  -v D:/one-tick/scripts/rag_eval:/eval `
+  -v D:/one-tick/app:/app/app `
   -e PYTHONPATH=/app/vendor:/app app python /eval/ingest.py
 
 # 2) 造题（一次 5 题，逐题落盘）
@@ -285,8 +285,8 @@ docker compose run -d --name buildq ... python /eval/build_questions.py
 
 # 3) 检索层评测（两条路径对比 + 语料规模扫描）
 docker compose run -d --name evalrag `
-  -v D:/python-checkin/scripts/rag_eval:/eval `
-  -v D:/python-checkin/app:/app/app `
+  -v D:/one-tick/scripts/rag_eval:/eval `
+  -v D:/one-tick/app:/app/app `
   -e PYTHONPATH=/app/vendor:/app app python /eval/eval_rag.py --paths scan,sql --sweep
 
 # 4) ef_search 调参（强制走索引，防规划器退化）
