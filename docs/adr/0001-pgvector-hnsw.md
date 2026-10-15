@@ -1,11 +1,10 @@
 # ADR 0001: Use PostgreSQL with pgvector and HNSW
 
 - Status: accepted
-- Date: 2026-10-15
 
 ## Context
 
-The knowledge base is small enough to remain a portfolio-scale system, but it needs user isolation, deletion semantics, transactional consistency, and vector retrieval.
+The knowledge base is small enough to remain a single-node system, but it needs user isolation, deletion semantics, transactional consistency, and vector retrieval.
 
 ## Decision
 

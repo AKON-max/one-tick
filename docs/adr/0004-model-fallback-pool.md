@@ -1,7 +1,6 @@
 # ADR 0004: Use a Tiered Model Fallback Pool
 
 - Status: accepted
-- Date: 2026-10-15
 
 ## Context
 

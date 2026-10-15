@@ -1,7 +1,6 @@
 # ADR 0003: Put Nginx in Front of FastAPI and Next.js
 
 - Status: accepted
-- Date: 2026-10-15
 
 ## Context
 

@@ -1,7 +1,6 @@
 # ADR 0002: Use a Small Custom Agent Runtime
 
 - Status: accepted
-- Date: 2026-10-15
 
 ## Context
 

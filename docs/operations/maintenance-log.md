@@ -1,30 +1,36 @@
 # Maintenance Log
 
-## 2026-10-15 · Public repository preparation
+Running notes on what changed and why. Entries are grouped by delivery, not by release.
 
-- Added `README.md`, `specs/`, ADRs and unit tests.
-- Added GitHub Actions CI for backend tests and frontend checks.
-- Normalized One-Tick naming across runtime configuration and package metadata.
-- Removed legacy migration and course references from implementation comments.
-- Fixed Settings parsing when `.env` also contains Compose-only variables.
-- Fixed RAG retrieval metadata to use the current user scope.
-- Added sanitized architecture assets and handoff documentation.
-- Kept local-only interview material outside the repository.
+## 2026-10 · Retrieval quality
 
-### Open follow-ups
+- Replaced the retrieval candidate scan with a single database-side Top-K query ordered by cosine distance.
+- Added the HNSW cosine index in migration `0004_rag_vector_index` (`m=16`, `ef_construction=64`).
+- Set `hnsw.ef_search = 100` per transaction, chosen from the sweep recorded in `scripts/rag_eval/RAG_EVAL.md`.
+- Added the local cosine rerank stage (recall Top-20, rerank Top-5) and a similarity cutoff for refusal.
+- Added the RAG evaluation scripts and the question set used to compare the old and new paths.
+
+## 2026-09 · Realtime and model resilience
+
+- Added the WebSocket room with handshake authentication, a 30s heartbeat with 2x timeout eviction, per-connection rate limiting and client id de-duplication.
+- Added `@温柔宝` / `@嘴欠宝` / `/ai` parsing with per-role de-duplication, and moved AI generation off the broadcast path.
+- Added the three-tier model pool with separate handling for quota exhaustion and rate limiting, and disabled SDK-level retries.
+- Added token usage accounting per surface and tier.
+
+## 2026-09 · Learning loop
+
+- Added the plant growth state machine and island tree mapping (migrations `0002_garden`, `0003_garden_matured`).
+- Added 3D island coastline generation from unlocked tiles.
+- Added plan document to task synchronisation with a source hash for idempotency.
+- Added the Agent runtime: observe / analyse / plan / execute with persisted runs, steps, approvals and decisions.
+
+## Open follow-ups
 
 - [ ] Move WebSocket connection state and model availability state to shared storage.
 - [ ] Add database unique constraints for check-in and focus-session idempotency.
 - [ ] Project only required columns in the production RAG query.
 - [ ] Add provider-stub integration tests.
 - [ ] Add monitoring, alerts, backup automation and restore drills.
-
-## 2026-09 · Learning-loop delivery
-
-- Added the plant growth state machine and island tree mapping.
-- Added the 3D island coastline generation based on unlocked tiles.
-- Added the RAG vector index migration.
-- Added model fallback tiers and streaming AI chat orchestration.
 
 ## Maintenance rules
 
