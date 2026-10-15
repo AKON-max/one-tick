@@ -1,6 +1,6 @@
 # Contributing
 
-This is primarily a personal portfolio project. Changes should leave the repository easier to review, reproduce, and explain.
+This is a personal project maintained by a single developer. Changes should leave the repository easier to review, reproduce, and explain.
 
 ## Before opening a change
 

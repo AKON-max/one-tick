@@ -2,7 +2,7 @@
 
 ## Reporting
 
-This repository is a portfolio project. Do not open a public issue containing a working credential, private key, dump, or personal data. Contact the repository owner privately instead.
+This repository is maintained by a single developer. Do not open a public issue containing a working credential, private key, dump, or personal data. Contact the repository owner privately instead.
 
 ## Secrets
 
