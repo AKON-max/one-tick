@@ -98,7 +98,7 @@ export function PlantCard() {
   // 首帧加载占位，避免卡片跳动
   if (!garden) {
     return (
-      <div className="flex h-[520px] max-h-[62dvh] w-full max-w-[300px] items-center justify-center rounded-xl border border-white/[0.09] bg-[color-mix(in_srgb,var(--theme-background)_58%,transparent)] backdrop-blur-2xl">
+      <div className="flex h-[520px] max-h-[62dvh] w-full items-center justify-center rounded-xl border border-white/[0.09] bg-[color-mix(in_srgb,var(--theme-background)_58%,transparent)] backdrop-blur-2xl">
         <div className="size-5 animate-spin rounded-full border-2 border-primary/25 border-t-primary" />
       </div>
     );
@@ -118,7 +118,7 @@ export function PlantCard() {
       : "消耗 25 分钟能量，浇一次水";
 
   return (
-    <section className="relative flex h-[520px] max-h-[62dvh] w-full max-w-[300px] shrink-0 flex-col overflow-hidden rounded-xl border border-white/[0.09] bg-[color-mix(in_srgb,var(--theme-background)_58%,transparent)] shadow-[0_18px_55px_rgba(0,0,0,0.16)] backdrop-blur-2xl">
+    <section className="relative flex h-[520px] max-h-[62dvh] w-full min-w-0 shrink-0 flex-col overflow-hidden rounded-xl border border-white/[0.09] bg-[color-mix(in_srgb,var(--theme-background)_58%,transparent)] shadow-[0_18px_55px_rgba(0,0,0,0.16)] backdrop-blur-2xl lg:max-h-none">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-primary/[0.055] to-transparent" />
 
       {/* 标题 + 能量 */}
@@ -235,14 +235,27 @@ const LEAF_MID = "#5ead78";
 const LEAF_LIGHT = "#6dbf8a";
 const LEAF_HI = "#82cf9d";
 
-function PlantArt({ stage }: { stage: number }) {
+export function PlantArt({
+  stage,
+  width = 210,
+  height = 250,
+  className,
+}: {
+  stage: number;
+  /** 展示宽度（默认 210，卡片内使用） */
+  width?: number;
+  /** 展示高度（默认 250，卡片内使用） */
+  height?: number;
+  /** 额外类名：可用于响应式缩放（如 h-auto w-full） */
+  className?: string;
+}) {
   return (
     <svg
-      width="210"
-      height="250"
+      width={width}
+      height={height}
       viewBox="0 0 220 270"
       fill="none"
-      className="select-none"
+      className={cn("select-none", className)}
       role="img"
       aria-label={STAGE_LABELS[stage]}
     >

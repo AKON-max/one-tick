@@ -1,5 +1,5 @@
 # ============================================================
-# 用户每日 AI token 用量与限额（对应 src/lib/usage.ts）
+# 用户每日 AI token 用量与限额
 # 模型池（completions_with_fallback / stream_with_fallback）统一记账；
 # 交互式面（agent / studio / 聊天室）超限抛 UsageLimitError，返回友好提示。
 # ============================================================

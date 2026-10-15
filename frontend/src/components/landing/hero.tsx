@@ -14,7 +14,6 @@ import {
 } from "@phosphor-icons/react";
 import ShinyText from "./ShinyText";
 import VariableProximity from "@/components/ui/variable-proximity";
-import { GithubLink } from "@/components/layout/github-link";
 
 const pulseItems = [
   { icon: CalendarCheck, value: "12 天", label: "连续打卡" },
@@ -40,11 +39,8 @@ export function Hero() {
             <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-primary/35 bg-primary/15 backdrop-blur-md">
               <Leaf className="h-5 w-5 text-primary" weight="fill" />
             </span>
-            <span className="text-[15px] tracking-wide">Summer Checkin</span>
+            <span className="text-[15px] tracking-wide">One-Tick 一刻</span>
           </Link>
-        <div className="flex items-center gap-3">
-          <GithubLink />
-        </div>
       </nav>
 
       {/* 主内容 */}
@@ -63,10 +59,10 @@ export function Hero() {
             />
           </div>
 
-          {/* 主标题 — 双色：Summer 白 / Checkin 主题绿 */}
+          {/* 主标题 — 双色：One-Tick 白 / 一刻 主题绿 */}
           <h1 className="text-[44px] font-bold leading-[1.02] tracking-tight sm:text-5xl md:text-7xl lg:text-[88px]">
-            <span>Summer </span>
-            <span className="text-primary">Checkin</span>
+            <span>One-Tick </span>
+            <span className="text-primary">一刻</span>
           </h1>
 
           {/* 副标题 — VariableProximity 互动字体 */}
@@ -85,7 +81,7 @@ export function Hero() {
           {/* 按钮组 — Uiverse 风格 + 主题色 */}
           <div className="mt-9 flex flex-wrap items-center gap-4">
             <Link
-              href="/register"
+              href="/login"
               className="group inline-flex items-center gap-2 rounded-full border-2 border-primary-foreground bg-primary px-8 py-3.5 text-[15px] font-bold text-primary-foreground shadow-[0_0_0_0_var(--primary-foreground,#051612)] transition-all duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] hover:-translate-y-1 hover:translate-x-[-2px] hover:shadow-[4px_6px_0_0_var(--primary-foreground,#051612)] active:translate-y-0.5 active:translate-x-[1px] active:shadow-[0_0_0_0_var(--primary-foreground,#051612)]"
             >
               免费开始

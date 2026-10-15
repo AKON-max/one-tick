@@ -1,5 +1,5 @@
 // ============================================================
-// Day 10 优化：统一类型定义
+// 统一类型定义
 // ① ToolResult<T>   — Tool execute() 返回值（判别联合）
 // ② ActionResult<T> — Server Action 返回值（判别联合）
 // ③ Tool 专用类型    — PlanInfo / CheckinInfo / 各 Tool 返回体
@@ -125,7 +125,7 @@ export interface ChatMessage {
 }
 
 // ============================================================
-// Day 22 Agent Workflow: PlanTask 类型定义
+// Agent Workflow: PlanTask 类型定义
 // ============================================================
 export type TaskStatus = "pending" | "in_progress" | "done" | "skipped";
 export type TaskPriority = "high" | "normal" | "low";
@@ -191,7 +191,7 @@ export interface TodosListData {
 }
 
 // ============================================================
-// Phase 2: Memory + AgentDecision 类型
+// Memory + AgentDecision 类型
 // ============================================================
 
 /** 记忆类型 */
@@ -237,7 +237,7 @@ export interface DecisionStats {
 }
 
 // ============================================================
-// Phase 3: Notification + Report + Schedule 类型
+// Notification + Report + Schedule 类型
 // ============================================================
 
 export type NotificationType =

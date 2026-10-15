@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import {
+  ArrowRight,
   Bell,
   BellRinging,
   ChartBar,
@@ -52,6 +54,7 @@ const typeMeta: Record<
 };
 
 export function NotificationBell() {
+  const router = useRouter();
   const [unread, setUnread] = useState(0);
   const [notifications, setNotifications] = useState<NotificationInfo[]>([]);
   const [open, setOpen] = useState(false);
@@ -241,6 +244,22 @@ export function NotificationBell() {
                     <DialogClose render={<Button variant="outline" size="sm" />}>
                       关闭
                     </DialogClose>
+                    {/* 通知自带 actionUrl（提醒去打卡、报告去智能体…），但此前没人用它，
+                        所以点通知只能看内容、去不了。这里补一个显式入口：
+                        只加按钮、不改列表点击行为，避免误触 */}
+                    {viewing.actionUrl && (
+                      <Button
+                        size="sm"
+                        onClick={() => {
+                          const url = viewing.actionUrl as string;
+                          setViewing(null);
+                          router.push(url);
+                        }}
+                      >
+                        去看看
+                        <ArrowRight className="size-3.5" weight="bold" />
+                      </Button>
+                    )}
                   </DialogFooter>
                 </>
               );

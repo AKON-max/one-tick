@@ -1,0 +1,77 @@
+{
+  "questions": 40,
+  "k_final": 5,
+  "k_recall": 20,
+  "note": "exact 用 enable_indexscan=off 顺序扫描作 ground truth；各档 ef 均读回校验生效",
+  "sweep": [
+    {
+      "ef_search": "exact (enable_indexscan=off，顺序扫描)",
+      "hit@5": 0.925,
+      "recall@20": 0.95,
+      "latency_ms": {
+        "p50": 24.8
+      }
+    },
+    {
+      "ef_search": 1,
+      "hit@5": 0.45,
+      "recall@20": 0.45,
+      "agree_with_exact@20": 0.45,
+      "latency_ms": {
+        "p50": 0.7,
+        "p95": 1.1
+      }
+    },
+    {
+      "ef_search": 10,
+      "hit@5": 0.8,
+      "recall@20": 0.825,
+      "agree_with_exact@20": 0.825,
+      "latency_ms": {
+        "p50": 0.8,
+        "p95": 1.2
+      }
+    },
+    {
+      "ef_search": 40,
+      "hit@5": 0.85,
+      "recall@20": 0.875,
+      "agree_with_exact@20": 0.875,
+      "latency_ms": {
+        "p50": 1.1,
+        "p95": 1.5
+      }
+    },
+    {
+      "ef_search": 100,
+      "hit@5": 0.9,
+      "recall@20": 0.925,
+      "agree_with_exact@20": 0.925,
+      "latency_ms": {
+        "p50": 1.4,
+        "p95": 1.7
+      }
+    },
+    {
+      "ef_search": 200,
+      "hit@5": 0.9,
+      "recall@20": 0.925,
+      "agree_with_exact@20": 0.925,
+      "latency_ms": {
+        "p50": 2.0,
+        "p95": 2.7
+      }
+    },
+    {
+      "ef_search": 400,
+      "hit@5": 0.925,
+      "recall@20": 0.95,
+      "agree_with_exact@20": 0.95,
+      "latency_ms": {
+        "p50": 2.8,
+        "p95": 3.7
+      }
+    }
+  ],
+  "exact_latency_mean_ms": 25.5
+}

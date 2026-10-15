@@ -1,5 +1,5 @@
 # ============================================================
-# Python Checkin - 后端镜像
+# One-Tick - 后端镜像
 # FastAPI + SQLAlchemy + PostgreSQL(pgvector)
 # 启动时先跑 Alembic 迁移再起服务
 #

@@ -1,5 +1,5 @@
 # ============================================================
-# Phase 1: Agent Runtime — 自主学习循环的核心引擎（对应 src/lib/agent/runtime.ts）
+# Agent Runtime — 自主学习循环的核心引擎
 #
 # 架构设计：
 #
@@ -38,7 +38,7 @@ from app.models.agent import AgentApproval, AgentRun, AgentStep, UserMemory
 from app.models.misc import Notification
 from app.models.study import Checkin, Plan, PlanTask, StudyRecord
 
-# ---- Agent Coach 系统提示词（对应 src/lib/agent/prompts.ts） ----
+# ---- Agent Coach 系统提示词 ----
 
 AGENT_COACH_PROMPT = """你是 Summer，一个贴心的学习伙伴。你不是冷冰冰的报告机器人——你像朋友一样跟用户聊天，关心他们的学习状态。
 
@@ -107,14 +107,14 @@ def _now_utc() -> datetime:
 
 
 def _utc_date(dt: datetime) -> str:
-    """datetime → UTC 日期字符串（对应 TS toISOString().slice(0, 10)）"""
+    """datetime → UTC 日期字符串"""
     if dt.tzinfo is None:
         dt = dt.replace(tzinfo=timezone.utc)
     return dt.astimezone(timezone.utc).strftime("%Y-%m-%d")
 
 
 def _local_midnight_utc() -> datetime:
-    """服务器本地时区「今天零点」→ UTC（对应 TS setHours(0,0,0,0) + Prisma UTC 序列化）"""
+    """服务器本地时区「今天零点」→ UTC，用于日界比较"""
     local_midnight = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
     return local_midnight.astimezone(timezone.utc)
 
@@ -127,7 +127,7 @@ def _create_notification(
     content: str,
     action_url: str | None = None,
 ) -> Notification | None:
-    """创建通知（每日节流：同一用户当天同类型只保留一条，对应 src/lib/notification.ts）"""
+    """创建通知；同一用户当天同类型只保留一条"""
     try:
         start_of_day = _local_midnight_utc()
         existing = db.execute(
@@ -163,7 +163,7 @@ def _create_notification(
 # ============================================================
 
 def observe(user_id: str) -> dict:
-    """收集用户全部学习上下文（对应 observe）
+    """收集用户全部学习上下文
 
     统计（打卡仅为小岛计数：不含时长/科目/心情）、
     活跃计划（含任务统计）、待办任务、目标类长期记忆、今日专注、最近 7 次打卡。
@@ -294,7 +294,7 @@ def observe(user_id: str) -> dict:
 # ============================================================
 
 def analyze(context: dict, memories: list[dict], user_id: str) -> dict:
-    """用 LLM 分析学习状态并输出行动建议（对应 analyze）"""
+    """用 LLM 分析学习状态并输出行动建议"""
     # 构建分析 prompt
     memory_text = (
         "\n".join(f"- [{m.get('type')}] {m.get('content')}" for m in memories)
@@ -382,7 +382,7 @@ def analyze(context: dict, memories: list[dict], user_id: str) -> dict:
 # ---- 规则兜底分析 ----
 
 def fallback_analysis(context: dict) -> dict:
-    """规则兜底分析 — 当 LLM 不可用时，基于数据阈值做判断（对应 fallbackAnalysis）"""
+    """规则兜底分析 — 当 LLM 不可用时，基于数据阈值做判断"""
     findings: list[dict] = []
     actions: list[dict] = []
 
@@ -469,12 +469,12 @@ def fallback_analysis(context: dict) -> dict:
 # ============================================================
 
 def plan_agent(context: dict, analysis: dict) -> list[dict]:
-    """行动计划：直接复用 analyze 输出的 actions（对应 formatPlanForApproval 的数据源）"""
+    """行动计划：直接复用 analyze 输出的 actions"""
     return list(analysis.get("actions") or [])
 
 
 def format_plan_for_approval(analysis: dict) -> list[dict]:
-    """仅保留 high/normal 优先级的行动，供写入 AgentApproval（对应 formatPlanForApproval）"""
+    """仅保留 high/normal 优先级的行动，供写入 AgentApproval"""
     return [
         {"action": a["type"], "payload": a}
         for a in analysis.get("actions", [])
@@ -493,7 +493,7 @@ def execute_action(
     analysis: dict | None = None,
     db=None,
 ) -> dict:
-    """执行一条 Agent 行动（对应 executeAction）
+    """执行一条 Agent 行动
 
     - SEND_REMINDER → 创建真实的 Notification 记录
     - GENERATE_REPORT → 生成结构化日报并保存为 Notification
@@ -682,7 +682,7 @@ def execute_agent(
     context: dict | None = None,
     analysis: dict | None = None,
 ) -> list[dict]:
-    """批量执行 Agent 行动计划（对应 runLearningAgent 中的执行循环）"""
+    """批量执行 Agent 行动计划"""
     results: list[dict] = []
     for action in plan:
         result = execute_action(user_id, action, context, analysis, db=db)
@@ -701,7 +701,7 @@ def run_learning_agent(
     user_id: str,
     options: dict | None = None,
 ) -> dict:
-    """完整自主学习循环（对应 runLearningAgent）
+    """完整自主学习循环
 
     options: {"persist": bool(默认 True), "mode": "coach" | "review" | "daily"(默认 "coach")}
     全量落库 AgentRun + AgentStep（每步 input/output JSON）+ AgentDecision。
@@ -859,7 +859,7 @@ def run_learning_agent(
                 f"[Agent Runtime]   action={result['type']} success={result['success']}: {result['message'][:80]}"
             )
 
-            # Phase 2: 记录 Agent 决策到 AgentDecision 表
+            # 记录 Agent 决策到 AgentDecision 表
             if run:
                 if action["type"] == "ADJUST_PLAN":
                     decision_type = "PLAN_ADJUST"

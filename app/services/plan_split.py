@@ -1,5 +1,5 @@
 # ============================================================
-# 计划任务拆分服务（对应 src/lib/plan-split.ts 的 splitPlanTasks）
+# 计划任务拆分服务
 #
 # 把计划文档（含目标/说明）总结成平铺的、可打勾的任务清单。
 # 幂等流程：
@@ -30,7 +30,7 @@ def plan_task_source_hash(plan: Plan) -> str:
     return hashlib.sha256(plan_task_source(plan).encode("utf-8")).hexdigest()
 
 
-# ---- Prompt（与原 plan-split.ts 保持一致）----
+# ---- Prompt----
 
 SPLIT_SYSTEM_PROMPT = """你是学习计划拆解助手，把用户的学习计划文档拆成可执行、可打勾的任务清单。
 
@@ -189,7 +189,7 @@ def _clear_splitting_flag(db: Session, plan_id: str) -> None:
 
 
 def split_plan_tasks(db: Session, plan: Plan, user_id: str) -> dict:
-    """拆分计划任务（幂等）。返回结构对齐原 splitPlanTasks：
+    """拆分计划任务（幂等）。返回结构：
     { success, alreadyRunning, changed, reason?, created, updated, deleted }
     """
     source = plan_task_source(plan)

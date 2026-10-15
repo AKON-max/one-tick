@@ -101,7 +101,7 @@ export const SCENE_COPY: Record<SceneType, SceneCopy> = {
 export const DEFAULT_SCENE: SceneType = "rain";
 
 /** localStorage 存储 key（由 SceneProvider 与其他读写处共享） */
-export const SCENE_STORAGE_KEY = "summer-checkin-scene";
+export const SCENE_STORAGE_KEY = "one-tick-scene";
 
 /** 从任意输入安全地收敛为 SceneType，兜底返回 DEFAULT_SCENE */
 export function asSceneType(v: unknown): SceneType {

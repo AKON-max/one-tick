@@ -80,6 +80,20 @@ export async function signIn(params: {
   }
 }
 
+export async function signInAsGuest(): Promise<AuthResult> {
+  // 游客体验：后端新建一个隔离的临时账号并直接签发登录态（免注册）
+  try {
+    const data = await request<{ token: string; user: AuthUser }>(
+      "/api/auth/guest",
+      { method: "POST" },
+    );
+    return { data: data, error: null };
+  } catch (e) {
+    const err = e as Error & { status?: number };
+    return { data: null, error: { message: err.message, status: err.status } };
+  }
+}
+
 export async function signOut(): Promise<AuthResult> {
   // JWT 无状态：前端清掉 cookie 即完成登出（cookie 非 httpOnly 可直接删）
   document.cookie = "session_token=; Max-Age=0; path=/";
@@ -118,6 +132,7 @@ export function useSession() {
 export const authClient = {
   signIn: { email: signIn },
   signUp: { email: signUp },
+  signInAsGuest,
   signOut,
   useSession,
 };

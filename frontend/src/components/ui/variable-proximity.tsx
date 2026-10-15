@@ -54,7 +54,6 @@ const VariableProximity = forwardRef<HTMLSpanElement, Props>((props, ref) => {
   } = props;
 
   const letterRefs = useRef<(HTMLElement | null)[]>([]);
-  const interpolatedSettingsRef = useRef<string[]>([]);
   const mousePositionRef = useMousePositionRef(containerRef);
   const lastPosRef = useRef<{ x: number | null; y: number | null }>({ x: null, y: null });
 
@@ -83,7 +82,7 @@ const VariableProximity = forwardRef<HTMLSpanElement, Props>((props, ref) => {
     if (lastPosRef.current.x === x && lastPosRef.current.y === y) return;
     lastPosRef.current = { x, y };
 
-    letterRefs.current.forEach((el, i) => {
+    letterRefs.current.forEach((el) => {
       if (!el) return;
       const rect = el.getBoundingClientRect();
       const lx = rect.left + rect.width / 2 - r.left;
@@ -99,7 +98,6 @@ const VariableProximity = forwardRef<HTMLSpanElement, Props>((props, ref) => {
       const ns = parsedSettings.map(({ axis, fv: fv2, tv }) =>
         `'${axis}' ${fv2 + (tv - fv2) * fv}`
       ).join(", ");
-      interpolatedSettingsRef.current[i] = ns;
       el.style.fontVariationSettings = ns;
       if (highlightColor && baseColor) {
         el.style.color = highlightColor;
@@ -109,12 +107,16 @@ const VariableProximity = forwardRef<HTMLSpanElement, Props>((props, ref) => {
   });
 
   const words = label.split(" ");
+  // 中日韩文字之间可任意断行，只有 latin 单词需要 nowrap。
+  // 若对整段中文也 nowrap，整段会被包成一个不可断行的 inline-block，
+  // 最小宽度撑到文本全长，窄屏下直接把容器顶出横向溢出。
+  const noWrap = (w: string) => !/[\u3400-\u9fff\u3000-\u303f\uff00-\uffef]/.test(w);
   let idx = 0;
   return (
     <span ref={ref} className={`${className} variable-proximity`} onClick={onClick}
       style={{ display: "inline", ...style }} {...rest}>
       {words.map((w, wi) => (
-        <span key={wi} style={{ display: "inline-block", whiteSpace: "nowrap" }}>
+        <span key={wi} style={{ display: "inline-block", whiteSpace: noWrap(w) ? "nowrap" : "normal" }}>
           {w.split("").map(ch => {
             const ci = idx++;
             return (
@@ -122,7 +124,6 @@ const VariableProximity = forwardRef<HTMLSpanElement, Props>((props, ref) => {
                 ref={(el) => { letterRefs.current[ci] = el; }}
                 style={{
                   display: "inline-block",
-                  fontVariationSettings: interpolatedSettingsRef.current[ci],
                   color: baseColor,
                   transition: "color 0.15s ease-out, opacity 0.15s ease-out",
                 }}

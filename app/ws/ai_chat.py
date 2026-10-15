@@ -1,7 +1,7 @@
 # ============================================================
-# @AI 聊天：复用项目同款模型池，回复回推到房间（对应 server/ai.ts）
+# @AI 聊天：复用项目同款模型池，回复回推到房间
 # 聊天室里的雨宝是纯聊天好友；agent 类功能统一引导去智能体
-# 注意：原项目是 token 流式，Python 版先做非流式一次性生成，
+# 当前实现先做非流式一次性生成，
 # 再按小段广播 ai:delta，保持前端占位气泡协议行为一致。
 # ============================================================
 
@@ -30,7 +30,7 @@ from app.ws.protocol import (
 from app.ws.room import broadcast
 
 # ── 两个雨宝：温柔宝（gentle）/ 嘴欠宝（snarky） ──
-# （prompt 与 server/ai.ts 完全一致）
+#
 
 GENTLE_SYSTEM_PROMPT = """
 不要使用emoji，话尽量不要超过三句，不要有多余的动作，不要擅自换行，一下子说完不要使用"~"符号和双引号
@@ -66,8 +66,8 @@ AI_ROLE_CONFIG: dict[str, dict] = {
 
 # 两个"智能体"的虚拟用户身份：AI 消息落库时 userId 指向它们，让消息像两个真实用户发的
 AI_USERS: dict[str, dict] = {
-    AI_ROLE_GENTLE: {"id": "ai-gentle", "name": "温柔宝", "email": "ai-gentle@checkin.local"},
-    AI_ROLE_SNARKY: {"id": "ai-snarky", "name": "嘴欠宝", "email": "ai-snarky@checkin.local"},
+    AI_ROLE_GENTLE: {"id": "ai-gentle", "name": "温柔宝", "email": "ai-gentle@one-tick.local"},
+    AI_ROLE_SNARKY: {"id": "ai-snarky", "name": "嘴欠宝", "email": "ai-snarky@one-tick.local"},
 }
 
 # 模拟流式时的分片大小（字符），让前端占位气泡逐段渲染
@@ -103,7 +103,7 @@ async def _broadcast_ai_down(request_id: str, ai_role: str, name: str) -> None:
 
 
 async def handle_ai(prompt: str, user_id: Optional[str] = None, ai_role: str = AI_ROLE_SNARKY) -> None:
-    """处理 @雨宝 触发：取最近全局消息作上下文 → 生成 → 落库 → 广播（对应 server/ai.ts 的 handleAI）"""
+    """处理 @雨宝 触发：取最近全局消息作上下文 → 生成 → 落库 → 广播"""
     cfg = AI_ROLE_CONFIG[ai_role]
     # 每次 AI 调用一个唯一 id，前端用它在多个并发流式中定位各自的占位气泡
     request_id = f"ai-{int(time.time() * 1000):x}{secrets.token_hex(3)}"

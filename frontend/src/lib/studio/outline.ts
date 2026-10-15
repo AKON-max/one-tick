@@ -1,5 +1,5 @@
 // 文档工作室：从 Markdown 提取标题目录（大纲）
-// Phase 0 先用正则实现，Phase 1 视需要换为从编辑器状态提取（带滚动定位）
+// 当前用正则构建大纲；需要精确定位时可改为读取编辑器状态。
 
 export interface HeadingInfo {
   level: number; // 1-6

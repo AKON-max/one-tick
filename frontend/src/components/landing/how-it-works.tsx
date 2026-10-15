@@ -22,7 +22,7 @@ export function HowItWorks() {
             <p className="text-sm font-semibold text-primary">成长不是一个数字</p>
             <h2 className="mt-3 text-3xl font-semibold leading-tight md:text-5xl">看见节奏，<br />才能<span className="text-primary">持续调整</span></h2>
             <p className="mt-6 max-w-lg text-base leading-7 text-white/56">
-              Summer Checkin 不用排行榜制造焦虑。它把任务完成、专注时长和连续行动整理成属于你的趋势，再由雨宝解释变化背后的原因。
+              One-Tick 不用排行榜制造焦虑。它把任务完成、专注时长和连续行动整理成属于你的趋势，再由雨宝解释变化背后的原因。
             </p>
             <div className="mt-9 flex gap-8 border-t border-white/12 pt-6">
               <div><p className="text-2xl font-semibold">12 天</p><p className="mt-1 text-xs text-white/36">当前连续记录</p></div>

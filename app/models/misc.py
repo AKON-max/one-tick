@@ -1,5 +1,5 @@
 # ============================================================
-# 杂项模型（对应 prisma Notification / TokenUsage / AvatarChange）
+# 杂项模型
 # ============================================================
 
 import uuid
@@ -20,7 +20,7 @@ def _now() -> datetime:
 
 
 class Notification(Base):
-    """通知（对应 prisma Notification，含 daily/weekly 去重逻辑）"""
+    """通知"""
 
     __tablename__ = "notification"
 
@@ -42,7 +42,7 @@ class Notification(Base):
 
 
 class TokenUsage(Base):
-    """用户 AI token 用量（对应 prisma TokenUsage，每日限额）"""
+    """用户 AI token 用量"""
 
     __tablename__ = "tokenusage"
 
@@ -62,7 +62,7 @@ class TokenUsage(Base):
 
 
 class AvatarChange(Base):
-    """头像变更记录（对应 prisma AvatarChange）"""
+    """头像变更记录"""
 
     __tablename__ = "avatarchange"
 

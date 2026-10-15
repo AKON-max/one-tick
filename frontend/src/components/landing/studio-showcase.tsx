@@ -45,7 +45,7 @@ export function StudioShowcase() {
               就是你的<span className="text-primary">知识花园</span>
             </h2>
             <p className="mt-5 max-w-lg text-base leading-relaxed text-white/56">
-              Summer Checkin 内置完整的 Markdown 阅读器与编辑器，支持代码高亮、数学公式、
+              One-Tick 内置完整的 Markdown 阅读器与编辑器，支持代码高亮、数学公式、
               表格、任务列表。框选任意文字，直接让 AI 帮你解释、总结或改写。
             </p>
 
@@ -89,8 +89,8 @@ export function StudioShowcase() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-[140px_1fr]">
-                <aside className="border-r border-white/8 p-3">
+              <div className="grid grid-cols-1 sm:grid-cols-[140px_minmax(0,1fr)]">
+                <aside className="hidden border-r border-white/8 p-3 sm:block">
                   <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-white/30">目录</p>
                   <div className="space-y-1.5">
                     {docOutline.map((item, i) => (
@@ -110,7 +110,7 @@ export function StudioShowcase() {
                   </div>
                 </aside>
 
-                <div className="p-5">
+                <div className="min-w-0 p-5">
                   <h3 className="text-lg font-bold text-white/90">虚拟 DOM 与 Diff 算法</h3>
                   <p className="mt-2 text-xs leading-5 text-white/50">
                     React 通过在内存中维护一棵虚拟 DOM 树，当状态变化时
@@ -123,7 +123,7 @@ export function StudioShowcase() {
                       <Code className="size-3" />
                       JavaScript
                     </div>
-                    <pre className="mt-1.5 text-[10px] leading-4 text-white/60">
+                    <pre className="mt-1.5 overflow-x-auto text-[10px] leading-4 text-white/60">
                       {"function diff(oldNode, newNode) {\n  // 深度遍历 + key 复用\n  if (oldNode.type === newNode.type) {\n    updateProps(oldNode, newNode);\n  }\n}"}
                     </pre>
                   </div>

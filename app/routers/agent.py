@@ -1,5 +1,5 @@
 # ============================================================
-# Agent 路由（对应 src/app/api/agent/runs/** + decisions/** + cron/daily）
+# Agent 路由
 # ============================================================
 
 from datetime import datetime
@@ -172,7 +172,7 @@ def decision_feedback(
         raise HTTPException(status_code=404, detail=str(e))
 
 
-# ---- Cron 巡检（对应 src/app/api/agent/cron/daily/route.ts）----
+# ---- Cron 巡检----
 
 @router.post("/cron/daily")
 def cron_daily(
@@ -181,7 +181,7 @@ def cron_daily(
     """每日巡检：对所有用户跑 run_learning_agent + 周报。
 
     生产环境由外部调度（APScheduler / crontab）定时调用本接口。
-    鉴权与原项目一致：配置了 CRON_SECRET 时要求
+    鉴权规则：配置了 CRON_SECRET 时要求
     `Authorization: Bearer <CRON_SECRET>`，未配置则不校验（本地调试）。
     """
     from app.core.config import settings

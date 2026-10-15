@@ -32,7 +32,7 @@ interface OnboardingContextValue {
 
 const OnboardingContext = createContext<OnboardingContextValue | null>(null);
 
-const STORAGE_PREFIX = "summer-checkin.tour";
+const STORAGE_PREFIX = "one-tick.tour";
 
 function storageKey(userId: string) {
   return `${STORAGE_PREFIX}.${TOUR_VERSION}.${userId}`;
@@ -103,12 +103,18 @@ export function OnboardingProvider({ userId, children }: { userId: string; child
     document.querySelector(".atomic-nav")?.classList.remove("atomic-nav--tour");
   }, []);
 
-  const cleanup = useCallback(() => {
+  /** 复位步骤级的一次性样式：展开的导航 + 高亮描边标记 */
+  const resetStepStyles = useCallback(() => {
     removeNavExpand();
+    document.body.classList.remove("tour-no-ring");
+  }, [removeNavExpand]);
+
+  const cleanup = useCallback(() => {
+    resetStepStyles();
     driverRef.current?.destroy();
     driverRef.current = null;
     activeRef.current = false;
-  }, [removeNavExpand]);
+  }, [resetStepStyles]);
 
   /** 按当前页面构建 driver（元素缺失自动退化为居中弹层） */
   const buildDriver = useCallback(
@@ -163,6 +169,8 @@ export function OnboardingProvider({ userId, children }: { userId: string; child
             // 展开瞬间重算高亮裁切位置（.atomic-nav--tour 已禁用过渡，尺寸即时生效）
             requestAnimationFrame(() => opts.driver.refresh());
           }
+          // 每步都按当前步骤重设标记（onDeselected 只清导航，避免钩子顺序把新步骤的标记抹掉）
+          document.body.classList.toggle("tour-no-ring", Boolean(step.data?.noRing));
         },
         onDeselected: (_el, step) => {
           if (step.data?.expandNav) removeNavExpand();
@@ -187,13 +195,13 @@ export function OnboardingProvider({ userId, children }: { userId: string; child
           // 导致引导永远关不掉（点 X / Esc / 完成都无反应）。
           activeRef.current = false;
           driverRef.current = null;
-          removeNavExpand();
+          resetStepStyles();
           if (!navigatingRef.current) markSeen(userId);
         },
       });
       return d;
     },
-    [router, removeNavExpand, cleanup, userId],
+    [router, removeNavExpand, resetStepStyles, cleanup, userId],
   );
 
   /** 在指定页面开始引导段落 */
@@ -209,6 +217,12 @@ export function OnboardingProvider({ userId, children }: { userId: string; child
       const d = buildDriver(page);
       driverRef.current = d;
       d.drive();
+      // 页面自带入场动画（.product-page--redesigned > * 的 product-enter 会上移 12px、
+      // 耗时 560ms）。若在高亮元素的动画途中被 driver 取了一次位置，高亮框就会一直
+      // 偏着不放；等动画落定后重测一次，保证框和元素严丝合缝。
+      window.setTimeout(() => {
+        if (activeRef.current && driverRef.current === d) d.refresh();
+      }, 700);
     },
     [buildDriver],
   );
@@ -261,10 +275,10 @@ export function OnboardingProvider({ userId, children }: { userId: string; child
   // 卸载时清理
   useEffect(() => {
     return () => {
-      removeNavExpand();
+      resetStepStyles();
       driverRef.current?.destroy();
     };
-  }, [removeNavExpand]);
+  }, [resetStepStyles]);
 
   return (
     <OnboardingContext.Provider value={{ startTour }}>

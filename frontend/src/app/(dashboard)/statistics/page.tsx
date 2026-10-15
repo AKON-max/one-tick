@@ -38,7 +38,7 @@ export default async function ProfilePage() {
   const user = await requireAuth();
   const now = new Date();
 
-  // 一次拉取个人资料页全部聚合数据（对应原 6 次 Prisma 查询）
+  // 一次拉取个人资料页全部聚合数据
   let data: ProfileOverview | null = null;
   try {
     data = await apiFetch<ProfileOverview>("/api/statistics/profile-overview");

@@ -1,6 +1,5 @@
 # ============================================================
-# AI 智能体模型（对应 prisma AgentRun / AgentStep / AgentApproval /
-#   AgentToolCall / AgentDecision / AgentSchedule / UserMemory / AIHistory）
+# AI 智能体模型
 # ============================================================
 
 import uuid
@@ -34,7 +33,7 @@ def _now() -> datetime:
 
 
 class AgentRun(Base):
-    """一次 Agent 运行批次（对应 prisma AgentRun）"""
+    """一次 Agent 运行批次"""
 
     __tablename__ = "agentrun"
 
@@ -67,7 +66,7 @@ class AgentRun(Base):
 
 
 class AgentStep(Base):
-    """Agent 运行中的单个步骤（对应 prisma AgentStep）"""
+    """Agent 运行中的单个步骤"""
 
     __tablename__ = "agentstep"
 
@@ -96,7 +95,7 @@ class AgentStep(Base):
 
 
 class AgentApproval(Base):
-    """Agent 动作的人工审批（对应 prisma AgentApproval）"""
+    """Agent 动作的人工审批"""
 
     __tablename__ = "agentapproval"
 
@@ -117,7 +116,7 @@ class AgentApproval(Base):
 
 
 class AgentToolCall(Base):
-    """Agent 的工具调用记录（对应 prisma AgentToolCall，含幂等 key）"""
+    """Agent 的工具调用记录"""
 
     __tablename__ = "agenttoolcall"
 
@@ -144,7 +143,7 @@ class AgentToolCall(Base):
 
 
 class AgentDecision(Base):
-    """Agent 决策留痕（对应 prisma AgentDecision，可追溯/可评估）"""
+    """Agent 决策留痕"""
 
     __tablename__ = "agentdecision"
 
@@ -171,7 +170,7 @@ class AgentDecision(Base):
 
 
 class AgentSchedule(Base):
-    """用户定时任务配置（对应 prisma AgentSchedule，cron 表达式）"""
+    """用户定时任务配置"""
 
     __tablename__ = "agentschedule"
 
@@ -196,7 +195,7 @@ class AgentSchedule(Base):
 
 
 class UserMemory(Base):
-    """用户长期记忆（对应 prisma UserMemory，embedding 存 pgvector）"""
+    """用户长期记忆"""
 
     __tablename__ = "usermemory"
 
@@ -204,7 +203,7 @@ class UserMemory(Base):
     userId: Mapped[str] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"))
     type: Mapped[str] = mapped_column(String, default="fact")
     content: Mapped[str] = mapped_column(Text)
-    # pgvector 向量列（原项目用 jsonb + JS 算余弦，Python 版直接 SQL 检索）
+    # pgvector 向量列，用于记忆的语义检索
     embedding = mapped_column(VECTOR(1024), nullable=True)
     importance: Mapped[float] = mapped_column(Float, default=0.5)
     confidence: Mapped[float] = mapped_column(Float, default=0.5)
@@ -221,7 +220,7 @@ class UserMemory(Base):
 
 
 class AIHistory(Base):
-    """AI 对话历史（对应 prisma AIHistory）"""
+    """AI 对话历史"""
 
     __tablename__ = "aihistory"
 

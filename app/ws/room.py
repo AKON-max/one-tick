@@ -1,5 +1,5 @@
 # ============================================================
-# 内存连接管理（对应 server/room.ts）
+# 内存连接管理
 # 单房间模式：聊天是全局一条流，所有在线连接共享同一个频道
 # 单实例起步，多实例再换 Redis/Postgres NOTIFY
 # ============================================================
@@ -14,7 +14,7 @@ from fastapi import WebSocket
 
 @dataclass(eq=False)
 class Connection:
-    """一条在线 WebSocket 连接（对应 room.ts 的 Connection）
+    """一条在线 WebSocket 连接
 
     eq=False：按对象身份哈希（连接是唯一实例，集合按 id 去重）。
     默认 dataclass 因含可变字段会被标记为 unhashable，add 到集合会抛 TypeError。
@@ -56,7 +56,7 @@ def all_connections() -> set[Connection]:
 
 
 async def broadcast(message) -> None:
-    """全局广播给所有在线连接（对应 room.ts 的 broadcast）"""
+    """全局广播给所有在线连接"""
     data = json.dumps(message, ensure_ascii=False)
     for c in all_connections():
         try:

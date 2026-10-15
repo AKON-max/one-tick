@@ -19,7 +19,7 @@ export function Footer() {
             <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-primary/35 bg-primary/15">
               <Leaf className="h-5 w-5 text-primary" weight="fill" />
             </span>
-            <span className="text-[15px] font-semibold tracking-wide">Summer Checkin</span>
+            <span className="text-[15px] font-semibold tracking-wide">One-Tick 一刻</span>
           </div>
 
           {/* 四步流程 */}

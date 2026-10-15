@@ -11,7 +11,7 @@ import { toast } from "sonner";
 
 export function ProfileForm({ user }: { user: { name: string; bio: string | null } }) {
   async function handleAction(_prev: unknown, formData: FormData) {
-    // Day 10: Server Action 不再 throw，改为返回值判断
+    // Server Action 通过返回值传递结果
     const result = await updateProfile(formData);
     if (!result.success) {
       toast.error(result.error);

@@ -8,8 +8,8 @@ import { SceneProvider } from "@/context/scene-context";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Summer Checkin AI - 智能学习打卡平台",
-  description: "记录假期学习之旅，用打卡、计划、数据与 AI 建立稳定的成长节奏。",
+  title: "One-Tick 一刻 · 智能学习打卡平台",
+  description: "把每一刻专注连成可见的成长节奏。用打卡、计划、数据与 AI 建立稳定的学习秩序。",
 };
 
 export default function RootLayout({

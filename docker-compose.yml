@@ -1,5 +1,5 @@
 # ============================================================
-# Python Checkin - 本地/服务器一键启动
+# One-Tick - 本地/服务器一键启动
 #   docker compose up -d --build
 # 组件：pgvector 数据库 + FastAPI 后端 + nginx 反代（HTTP + WebSocket）
 # ============================================================
@@ -11,11 +11,11 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      POSTGRES_DB: python_checkin
+      POSTGRES_DB: ${POSTGRES_DB:-one_tick}
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d python_checkin"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ${POSTGRES_DB:-one_tick}"]
       interval: 5s
       timeout: 3s
       retries: 12
@@ -25,7 +25,7 @@ services:
     restart: unless-stopped
     environment:
       # 数据库：指向 compose 内的 db 服务
-      DATABASE_URL: postgresql+psycopg2://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/python_checkin
+      DATABASE_URL: postgresql+psycopg2://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-one_tick}
       JWT_SECRET: ${JWT_SECRET:-dev-secret-change-me}
       CRON_SECRET: ${CRON_SECRET:-}
       PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-http://localhost}

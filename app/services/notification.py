@@ -1,5 +1,5 @@
 # ============================================================
-# 通知服务（对应 src/lib/notification.ts）
+# 通知服务
 # 职责：通知的创建（每日按类型去重）/ 列表 / 已读 / 删除 / 清理
 # 通知由 Agent（cron 巡检）生成，本模块只提供数据能力
 # ============================================================
@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 from app.models.base import User
 from app.models.misc import Notification
 
-# 合法通知类型（对应 NotificationType）
+# 合法通知类型
 NOTIFICATION_TYPES = ("reminder", "analysis", "report", "encouragement", "system")
 
 
@@ -26,7 +26,7 @@ def create_notification(
 ) -> Notification | None:
     """创建通知，每日节流去重：同用户当天同类型只保留一条
 
-    去重键 = 用户 + 类型 + 本地时区当天（对应原版 setHours(0,0,0,0) 的日界）。
+    去重键 = 用户 + 类型 + 本地时区当天（本地时区当天）。
     命中已存在 → 跳过并返回 None；任何异常也返回 None（不打扰主流程）。
     """
     try:
@@ -121,7 +121,7 @@ def mark_all_as_read(db: Session, userId: str) -> int:
 def delete_notification(db: Session, notificationId: str, userId: str) -> bool:
     """删除单条通知
 
-    注意：原版 deleteNotification 只用 id（存在越权风险），
+    注意：早期实现只按 id 删除（存在越权风险），
     这里改用 deleteMany 带 userId 做所有权校验（安全且对本人行为一致）。
     """
     try:

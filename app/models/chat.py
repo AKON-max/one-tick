@@ -1,5 +1,5 @@
 # ============================================================
-# 聊天与对话模型（对应 prisma ChatMessage / Conversation / ConversationMessage）
+# 聊天与对话模型
 # ============================================================
 
 import uuid
@@ -20,7 +20,7 @@ def _now() -> datetime:
 
 
 class ChatMessage(Base):
-    """聊天室消息（对应 prisma ChatMessage；userId 可空 → AI 虚拟用户）"""
+    """聊天室消息"""
 
     __tablename__ = "chatmessage"
 
@@ -40,7 +40,7 @@ class ChatMessage(Base):
 
 
 class Conversation(Base):
-    """AI 对话会话（对应 prisma Conversation）"""
+    """AI 对话会话"""
 
     __tablename__ = "conversation"
 
@@ -61,7 +61,7 @@ class Conversation(Base):
 
 
 class ConversationMessage(Base):
-    """会话中的单条消息（对应 prisma ConversationMessage）"""
+    """会话中的单条消息"""
 
     __tablename__ = "conversationmessage"
 

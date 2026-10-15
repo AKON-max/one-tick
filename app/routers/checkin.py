@@ -1,5 +1,5 @@
 # ============================================================
-# 打卡路由（对应 src/app/(dashboard)/checkin/actions.ts + api）
+# 打卡路由
 # - daily_checkin：每日签到（当天去重）
 # - 列表 / 详情
 # ============================================================
@@ -113,7 +113,7 @@ def list_checkins(
     return [CheckinResponse.from_model(c) for c in rows]
 
 
-# ---- 签到页聚合数据（对应 checkin/page.tsx 的 7 次 Prisma 查询）----
+# ---- 签到页聚合数据 ----
 
 class CheckinSummaryResponse(BaseModel):
     """小岛签到页一次拿全的数据"""

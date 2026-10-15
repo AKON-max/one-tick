@@ -1,5 +1,5 @@
 # ============================================================
-# 消息协议：客户端 ↔ 服务端 之间的类型化 JSON 消息（对应 server/protocol.ts）
+# 消息协议：客户端 ↔ 服务端 之间的类型化 JSON 消息
 # 每条消息都是 { type, ...payload }，type 决定字段
 # 单房间模式：聊天是全局一条流，没有 roomId
 # ============================================================
@@ -38,7 +38,7 @@ def iso_z(dt: datetime) -> str:
 
 
 def to_dto(msg, user_name, image=None) -> dict:
-    """将 DB 记录转为前端 DTO（对应 protocol.ts 的 toDTO）"""
+    """将 DB 记录转为前端 DTO"""
     role = msg.role if msg.role in (ROLE_ASSISTANT, ROLE_SYSTEM) else ROLE_USER
     return {
         "id": msg.id,

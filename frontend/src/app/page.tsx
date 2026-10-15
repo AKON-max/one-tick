@@ -2,7 +2,9 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth-utils";
 import { Hero } from "@/components/landing/hero";
 import { FeaturesGrid } from "@/components/landing/features-grid";
+import { AiShowcase } from "@/components/landing/ai-showcase";
 import { CheckinShowcase } from "@/components/landing/checkin-showcase";
+import { IslandShowcase } from "@/components/landing/island-showcase";
 import { StudioShowcase } from "@/components/landing/studio-showcase";
 import { HowItWorks } from "@/components/landing/how-it-works";
 import { CTASection } from "@/components/landing/cta-section";
@@ -16,7 +18,9 @@ export default async function LandingPage() {
     <div className="scenic-shell flex min-h-[100dvh] flex-col">
       <Hero />
       <FeaturesGrid />
+      <AiShowcase />
       <CheckinShowcase />
+      <IslandShowcase />
       <StudioShowcase />
       <HowItWorks />
       <CTASection />

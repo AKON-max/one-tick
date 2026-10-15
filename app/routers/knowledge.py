@@ -1,11 +1,11 @@
 # ============================================================
-# 知识库文档路由（对应 src/app/api/knowledge/documents/**）
+# 知识库文档路由
 # GET    /api/knowledge/documents                文档列表（按 sourceName 聚合）
 # POST   /api/knowledge/documents                上传（multipart 文件 或 JSON 文本）
 # GET    /api/knowledge/documents/{sourceName}   查看单篇（仅 md 可看）
 # DELETE /api/knowledge/documents/{sourceName}   删除（全部 chunk + 原文）
 #
-# 上传管道（对应 knowledge-upload.ts 的 processKnowledgeText）：
+# 上传管道：
 #   分片 → Embedding → 批量写 DocumentChunk（含向量）→ 存 KnowledgeDoc 原文
 # ============================================================
 
@@ -178,7 +178,7 @@ def get_knowledge_document(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    # 仅 markdown 允许查看（对应原版：其它类型返回 400）
+    # 仅 markdown 允许查看；其它类型返回 400
     is_md = source_name.endswith((".md", ".markdown"))
     if not is_md:
         raise HTTPException(status_code=400, detail="仅 Markdown 文档支持查看")

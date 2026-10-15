@@ -2,7 +2,7 @@
 
 // ============================================================
 // 设置 Server Action（薄封装）
-// 业务逻辑已迁移到 Python FastAPI：
+// 业务逻辑由 FastAPI 提供：
 //  - updateProfile  → PATCH /api/user/profile
 //  - changePassword → POST /api/auth/change-password
 // 调用方无需改动；改密成功后由前端清理 cookie 完成登出。

@@ -1,11 +1,11 @@
 # ============================================================
-# Agent 系统统一导出（对应 src/lib/agent/index.ts）
+# Agent 系统统一导出
 #
 # 模块结构：
 #   types.py     — Pydantic 类型（PlanDraft / TaskDraft / AgentRunResponse ...）
-#   runtime.py   — Phase 1: 自主学习循环（observe / analyze / execute / run_learning_agent）
-#   decisions.py — Phase 2: Agent 决策留痕
-#   report.py    — Phase 3: 学习报告生成
+#   runtime.py   — 自主学习循环（observe / analyze / execute / run_learning_agent）
+#   decisions.py — Agent 决策留痕
+#   report.py    — 学习报告生成
 #   weekly.py    — 周度学习周报
 #   service.py   — 计划生成（generate_plan_for_plan）+ AgentRun 运行管理
 # ============================================================
@@ -34,7 +34,7 @@ from app.ai.agent.types import (
     agent_run_statuses,
 )
 
-# ---- Phase 1: Agent Runtime（runtime） ----
+# ---- Agent Runtime（runtime） ----
 from app.ai.agent.runtime import (
     AGENT_COACH_PROMPT,
     analyze,
@@ -47,14 +47,14 @@ from app.ai.agent.runtime import (
     run_learning_agent,
 )
 
-# ---- Phase 3: 报告生成（report） ----
+# ---- 报告生成（report） ----
 from app.ai.agent.report import (
     format_report_as_markdown,
     generate_daily_report,
     generate_weekly_report,
 )
 
-# ---- Phase 2: AgentDecision（decisions） ----
+# ---- AgentDecision（decisions） ----
 from app.ai.agent.decisions import (
     create_decision,
     get_decision_stats,

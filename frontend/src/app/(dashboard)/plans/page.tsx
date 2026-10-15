@@ -19,7 +19,7 @@ interface PlanItem {
 export default async function PlansPage() {
   const user = await requireAuth();
 
-  // 计划 + 任务状态摘要（对应原 Prisma include tasks）
+  // 计划 + 任务状态摘要（一次查询返回）
   let rawPlans: PlanItem[] = [];
   try {
     rawPlans = await apiFetch<PlanItem[]>("/api/plans?include_tasks=true");

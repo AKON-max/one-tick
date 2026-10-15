@@ -1,5 +1,5 @@
 # ============================================================
-# Phase 3: 学习报告生成器（对应 src/lib/agent/report.ts）
+# 学习报告生成器
 #
 # 报告类型：
 # ① generate_daily_report   — 每日学习简报（轻量，主要给用户看）
@@ -33,7 +33,7 @@ def generate_daily_report(
     subject_details: list[dict] | None = None,
     run_id: str | None = None,
 ) -> dict:
-    """生成每日学习简报（对应 generateDailyReport）"""
+    """生成每日学习简报"""
     today = _now_utc().strftime("%Y-%m-%d")
 
     # 强弱项：优先用 analyzeStudyPattern 的结果，否则用科目详情兜底
@@ -142,7 +142,7 @@ def generate_weekly_report(
     subject_details: list[dict] | None = None,
     run_id: str | None = None,
 ) -> dict:
-    """生成周度学习总结（对应 generateWeeklyReport）"""
+    """生成周度学习总结"""
     daily = generate_daily_report(
         user_id, context, analysis, pattern, subject_details, run_id
     )

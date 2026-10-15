@@ -1,5 +1,5 @@
 # ============================================================
-# 文档工作室路由（对应 src/app/api/documents/**）
+# 文档工作室路由
 # GET    /api/documents                列表（100 条，updatedAt desc，不含 content）
 # POST   /api/documents                创建/导入（multipart .md 文件 或 JSON）
 # GET    /api/documents/{id}           单篇详情（校验归属）
@@ -114,7 +114,7 @@ def get_document(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """单篇详情；indexed 表示该文档标题已加入知识库（对应 docs/[id] 页的只读判定）"""
+    """单篇详情；indexed 表示该文档标题已加入知识库"""
     doc = _get_owned(db, doc_id, user.id)
     indexed = (
         db.execute(

@@ -1,6 +1,6 @@
 # ============================================================
-# 认证安全模块（对应 src/lib/auth.ts + src/lib/auth-utils.ts）
-# - 密码哈希：scrypt，格式 salt:hash（与 Better Auth 兼容，原项目 reset-password 同算法）
+# 认证安全模块
+# - 密码哈希：scrypt，格式 salt:hash，兼容历史密码数据
 # - JWT：签发 / 校验 / 获取当前用户依赖
 # ============================================================
 
@@ -19,17 +19,17 @@ from app.core.config import settings
 from app.db.session import get_db
 from app.models.base import User
 
-# ---- scrypt 参数（与 Better Auth 完全一致）----
+# ---- scrypt 参数 ----
 SCRYPT_N = 16384
 SCRYPT_R = 16
 SCRYPT_P = 1
 SCRYPT_DKLEN = 64
-# scrypt 内存需求 = 128 * N * r；默认 32MB 不够，需显式放开（Better Auth 同样处理）
+# scrypt 内存需求 = 128 * N * r；默认 32MB 不够，需显式放开
 SCRYPT_MAXMEM = 128 * SCRYPT_N * SCRYPT_R * 2
 
 
 def hash_password(password: str) -> str:
-    """生成 Better Auth 兼容的 scrypt 哈希：salt:hash（hex）"""
+    """生成 scrypt 哈希：salt:hash（hex）"""
     salt = secrets.token_bytes(16)
     key = hashlib.scrypt(
         unicodedata.normalize("NFKC", password).encode("utf-8"),
@@ -93,7 +93,7 @@ def decode_token(token: str) -> Optional[dict]:
 #    前端 52 处 fetch("/api/...") 无需逐个加 header）
 _bearer = HTTPBearer(auto_error=False)
 
-# 前端登录后写入的 cookie 名（与 src/proxy.ts 检查的一致）
+# 前端登录后写入的 cookie 名
 SESSION_COOKIE = "session_token"
 
 

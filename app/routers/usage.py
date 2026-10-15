@@ -1,5 +1,5 @@
 # ============================================================
-# 用量路由（对应 src/app/api/usage/route.ts）
+# 用量路由
 # GET /api/usage — 今日 AI token 用量（雨宝精力条每 30s 轮询）
 # ============================================================
 
@@ -19,5 +19,5 @@ def get_usage(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """今日用量汇总：返回裸对象 {used, limit, remaining, unlimited}，对齐原 TS 路由"""
+    """今日用量汇总：返回裸对象 {used, limit, remaining, unlimited}"""
     return get_today_usage(user.id, db)

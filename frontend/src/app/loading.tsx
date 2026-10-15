@@ -26,7 +26,7 @@ export default function GlobalLoading() {
 
         <div className="mt-7 flex items-center justify-center gap-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-primary/80">
           <Sparkle className="size-3" weight="fill" />
-          <span>Summer Checkin</span>
+          <span>One-Tick 一刻</span>
           <Sparkle className="size-3" weight="fill" />
         </div>
         <h1 className="mt-4 text-2xl font-semibold tracking-tight text-white/90 sm:text-[30px]">

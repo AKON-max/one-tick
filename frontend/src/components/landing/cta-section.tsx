@@ -19,7 +19,7 @@ export function CTASection() {
               <span className="flex items-center gap-2"><Check className="text-primary" />随时调整计划</span>
             </div>
           </div>
-          <Link href="/register" className="shrink-0">
+          <Link href="/login" className="shrink-0">
             <span className="inline-flex h-12 items-center gap-2 rounded-full border-2 border-primary-foreground bg-primary px-7 text-sm font-bold text-primary-foreground shadow-[4px_6px_0_0_var(--primary-foreground,#051612)] transition-all hover:-translate-y-1 hover:translate-x-[-2px] hover:shadow-[6px_8px_0_0_var(--primary-foreground,#051612)]">
               创建我的学习空间
               <ArrowRight className="h-4 w-4" weight="bold" />

@@ -44,7 +44,7 @@ import "@/styles/onboarding.css";
 // 与站外全站引导（OnboardingProvider）完全独立：进入文档工作台自动播放，
 // 看过一次不再弹（localStorage 按版本记忆），改版时 bump DOC_TOUR_VERSION 即可重播。
 const DOC_TOUR_VERSION = "v2";
-const DOC_TOUR_KEY = `summer-checkin.doc-tour.${DOC_TOUR_VERSION}`;
+const DOC_TOUR_KEY = `one-tick.doc-tour.${DOC_TOUR_VERSION}`;
 
 function hasSeenDocTour(): boolean {
   try {

@@ -1,5 +1,5 @@
 # ============================================================
-# OSS 服务（对应 src/lib/oss.ts）
+# OSS 服务
 # 职责：浏览器直传 OSS 的预签名 PUT 地址签发 + 头像对象校验/删除
 # 流程：前端请求 /api/oss/presign 拿 uploadUrl → 浏览器直接 PUT
 #       文件到阿里云 OSS（须带同款 Content-Type，否则签名校验 403）
@@ -16,7 +16,7 @@ from app.core.config import settings
 # 上传用途白名单（新增用途在此加一行即可复用整套流程）
 OSS_PURPOSES = ["avatars", "wallpapers"]
 
-# 允许的文件扩展名（对应 OSS_ALLOWED_EXTS）
+# 允许的文件扩展名
 OSS_ALLOWED_EXTS = ["png", "jpg", "jpeg", "webp", "gif"]
 
 # 扩展名 → Content-Type（Content-Type 会被纳入签名，直传时必须一致）

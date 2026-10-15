@@ -1,5 +1,5 @@
 # ============================================================
-# Phase 2: 长期记忆系统升级（对应 src/lib/memory.ts）
+# 长期记忆系统升级
 #
 # 升级内容：
 # ① type       — 记忆分类细化（goal/habit/preference/skill/weakness/fact）
@@ -25,7 +25,7 @@ from app.ai.rag.retriever import cosine_similarity, parse_embedding
 from app.db.session import SessionLocal
 from app.models.agent import UserMemory
 
-# ---- 类型（Phase 2 升级版）----
+# ---- 类型 ----
 
 # 记忆类型（比旧版 category 更细粒度，字符串字面量）
 MemoryType = Literal["goal", "habit", "preference", "skill", "weakness", "fact"]
@@ -279,7 +279,7 @@ def extract_and_save_memories(user_id: str, conversation: Any) -> None:
     设计为 fire-and-forget：调用方不应阻塞主请求。
     提取失败只记日志，不影响对话流。
 
-    Phase 2 升级：
+    实现说明：
     - type 细分：goal/habit/preference/skill/weakness/fact
     - importance + confidence：AI 打分
     - 智能去重：AI 判断匹配到已有记忆（matchExistingId）则更新而不新建

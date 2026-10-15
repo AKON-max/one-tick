@@ -1,5 +1,5 @@
 # ============================================================
-# FastAPI 应用入口（对应 src/app/ 入口 + server/index.ts 的健康检查）
+# FastAPI 应用入口
 # 挂载全部 REST 路由 + WebSocket 聊天室端点（/ws）
 # ============================================================
 
@@ -33,7 +33,7 @@ from app.ws import chat as ws_chat
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # 启动时：启动聊天室心跳清理任务（对应 server/index.ts 的 heartbeat）
+    # 启动聊天室心跳清理任务
     print(f"[{settings.APP_NAME}] 启动中...")
     heartbeat_task = asyncio.create_task(ws_chat.heartbeat_loop())
     yield
@@ -42,8 +42,8 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="Python Checkin",
-    description="全栈学习打卡平台（Python 版）— 打卡 · 计划 · 专注 · AI 助手 · 知识库",
+    title="One-Tick API",
+    description="One-Tick 一刻 — 学习计划、专注、AI 助手与知识库 API",
     version="0.1.0",
     lifespan=lifespan,
 )
@@ -51,7 +51,7 @@ app = FastAPI(
 
 @app.get("/health")
 def health():
-    """健康检查（对应原项目 server/index.ts 的 /health）"""
+    """健康检查"""
     return {"status": "ok"}
 
 
@@ -75,5 +75,5 @@ app.include_router(user.router)
 app.include_router(usage.router)
 # ---- 植物农场 ----
 app.include_router(garden.router)
-# ---- WebSocket 聊天室（对应 server/index.ts 的 /ws）----
+# ---- WebSocket 聊天室 ----
 app.include_router(ws_chat.router)

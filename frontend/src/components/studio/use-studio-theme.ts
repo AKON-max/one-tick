@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useScene, type SceneType } from "@/context/scene-context";
 
 /* ────────────────────────────────────────────────────────────
    7 预设套餐：每个套餐绑定 主题色 + 背景，不可单独拆分
@@ -58,7 +59,7 @@ export function getPresetConfig(preset: StudioPreset): PresetConfig {
 }
 
 const STORAGE_KEY = "studio-theme:v2";
-const GLOBAL_SCENE_KEY = "summer-checkin-scene";
+const GLOBAL_SCENE_KEY = "one-tick-scene";
 const VALID_PRESETS = Object.keys(PRESET_MAP) as StudioPreset[];
 
 interface Persisted {
@@ -76,6 +77,13 @@ const SCENE_TO_PRESET: Record<string, StudioPreset> = {
   rain: "dark-rain",
   snow: "light-snow",
   cloud: "khaki-cloud",
+};
+
+/** Studio Preset → 全局 Scene（SCENE_TO_PRESET 的逆向，只覆盖三个场景套餐） */
+const PRESET_TO_SCENE: Partial<Record<StudioPreset, SceneType>> = {
+  "dark-rain": "rain",
+  "light-snow": "snow",
+  "khaki-cloud": "cloud",
 };
 
 /** 每个场景 preset 的默认透明度（和现有 fixed/range 默认保持一致） */
@@ -146,6 +154,9 @@ export function useStudioTheme(): {
   opacityMax: number;
   opacityLabel: string;
 } {
+  // Studio 里的三个场景套餐和全局场景是同一个东西，必须双向同步
+  const { scene: globalScene, setScene: setGlobalScene } = useScene();
+
   // 首帧同步读取 localStorage（初始化器在客户端同步执行，SSR 走 DEFAULT）
   // 避免 useEffect → setState 的两阶段渲染闪屏
   const [preset, setPresetState] = useState<StudioPreset>(() => readInitialPersisted().preset);
@@ -167,6 +178,15 @@ export function useStudioTheme(): {
       /* ignore */
     }
   }, [preset, opacity]);
+
+  // 反向同步：别处（顶栏 / 小岛 / 展示页）切了场景后，Studio 若正停在某个场景套餐就跟着换。
+  // 停在纯色套餐（暗色 / 亮色 / 卡其 / 抹茶）时不动 —— 那是用户在 Studio 里的独立选择，
+  // 不属于全局场景的一部分。
+  useEffect(() => {
+    const target = SCENE_TO_PRESET[globalScene];
+    if (!target) return;
+    setPresetState((prev) => (PRESET_TO_SCENE[prev] && prev !== target ? target : prev));
+  }, [globalScene]);
 
   const config = useMemo(() => PRESET_MAP[preset], [preset]);
   const theme = config.theme;
@@ -214,6 +234,10 @@ export function useStudioTheme(): {
         setOpacityState(range.default);
       }
     }
+    // 正向同步：选了「雨林 / 雪日 / 暖云」，就是切了全局场景。
+    // 缺这一步时，在文档工作台切完场景，退出后首页 / 顶栏 / 背景还是旧场景。
+    const nextScene = PRESET_TO_SCENE[p];
+    if (nextScene) setGlobalScene(nextScene);
   }
   function setOpacity(n: number) {
     if (fixedOpacity !== undefined) return; // 固定透明度套餐不允许调整

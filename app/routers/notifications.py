@@ -1,5 +1,5 @@
 # ============================================================
-# 通知路由（对应 src/app/api/notifications/**）
+# 通知路由
 # GET    /api/notifications           列表 + 未读数（分页）
 # POST   /api/notifications           全部标记已读 {action:"markAllRead"}
 # PATCH  /api/notifications/{id}      标记单条已读 {read:true}

@@ -1,5 +1,5 @@
 # ============================================================
-# 用户头像路由（对应 src/app/api/user/avatar/route.ts）
+# 用户头像路由
 # PATCH /api/user/avatar  { avatar: "1"~"16"|"ai" 或 OSS 公开 URL }
 #  - 预设头像：直接写库，不限流
 #  - OSS 头像：3/min 内存限流 + 5/day 数据库限流 + HEAD 校验存在性与 ≤5MB
@@ -26,7 +26,7 @@ from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/api/user", tags=["user"])
 
-# 预设头像 id 白名单（对应 avatar-presets.ts 的 VALID_AVATAR_IDS："1"~"16" / "ai"）
+# 预设头像 id 白名单
 VALID_AVATAR_IDS = {str(i) for i in range(1, 17)} | {"ai"}
 
 # OSS 头像大小上限（5MB），超出拒绝并清理该对象
@@ -66,7 +66,7 @@ def update_profile(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """更新个人资料（对应 settings/actions.ts 的 updateProfile）"""
+    """更新个人资料"""
     if req.name is not None and req.name.strip():
         user.name = req.name.strip()
     if req.bio is not None:

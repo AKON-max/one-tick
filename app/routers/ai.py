@@ -1,7 +1,7 @@
 # ============================================================
-# AI 聊天路由（对应 src/app/api/ai/route.ts）
+# AI 聊天路由
 #
-# 处理流程（按原项目逐条对齐）：
+# 处理流程：
 # ① 鉴权 + 限额早检
 # ② 建会话（无则自动创建 + AI 生成标题）
 # ③ 保存用户消息
@@ -15,9 +15,10 @@
 import json
 import queue
 import threading
-from typing import AsyncGenerator, Callable
+from typing import Callable, Iterator
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -230,7 +231,7 @@ def _run_agent_loop(
 ):
     """简易 Agent 循环：LLM 判断 → 调用工具 → 观察结果 → 再判断。
 
-    对应原项目 AI SDK 的 maxSteps + Tool Calling。
+    基于 maxSteps 与 Tool Calling 的受限工具循环。
     每一轮都用 stream=True 流式调用：
     - content delta 立即通过 on_delta 吐出（前端打字机效果）
     - 同时累积 tool_calls 判断是否要执行工具
@@ -421,7 +422,7 @@ async def ai_chat(
 
     # ⑦ 真流式回复：模型池降级；线程内跑 Agent 循环，LLM 的每个增量 token
     #    经队列实时推到响应流（on_delta → queue → yield），前端即打即显。
-    def stream_generator() -> AsyncGenerator[str, None]:
+    def stream_generator() -> Iterator[str]:
         q: queue.Queue = queue.Queue()
         state: dict = {"error": None, "content": None}
 
@@ -500,6 +501,3 @@ async def ai_chat(
         media_type="text/plain; charset=utf-8",
         headers={"X-Conversation-Id": conversation_id},
     )
-
-
-from fastapi.responses import StreamingResponse  # noqa: E402

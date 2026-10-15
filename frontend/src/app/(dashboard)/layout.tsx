@@ -1,5 +1,5 @@
 // ============================================================
-// Day 11: requireAuth() 强制鉴权 — 未登录用户自动跳转 /login
+// 页面鉴权：未登录用户自动跳转 /login
 // ============================================================
 import { requireAuth } from "@/lib/auth-utils";
 import { TopNav } from "@/components/layout/top-nav";

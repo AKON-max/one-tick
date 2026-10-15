@@ -30,10 +30,13 @@ export function SceneSelector() {
   const activeIndex = SCENE_GALLERY.findIndex((s) => s.value === scene);
 
   return (
-    <div ref={containerRef} className="relative inline-block" data-tour="scene-selector">
-      {/* 场景切换按钮：样式与"沉浸模式"按钮一致，跟随主题色 */}
+    <div ref={containerRef} className="relative inline-block">
+      {/* 场景切换按钮：样式与"沉浸模式"按钮一致，跟随主题色。
+          data-tour 必须挂在按钮本身：外层容器是 flex item（自成 BFC），会包含按钮的
+          mt-10，挂了会在按钮上方多框出 40px 空白，引导高亮看起来偏上、框不准 */}
       <button
         type="button"
+        data-tour="scene-selector"
         onClick={() => setOpen((v) => !v)}
         className="flex shrink-0 mt-10 items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/30 transition hover:scale-[1.03] hover:bg-primary/90 active:scale-95"
         aria-label="切换学习场景"

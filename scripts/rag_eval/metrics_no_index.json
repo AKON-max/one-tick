@@ -1,0 +1,85 @@
+{
+  "corpus_chunks": 9885,
+  "question_count": 50,
+  "answerable_count": 40,
+  "unanswerable_count": 10,
+  "hnsw_index": false,
+  "k_final": 5,
+  "k_recall": 20,
+  "paths": [
+    {
+      "path": "sql",
+      "questions": 40,
+      "hit@5": 0.925,
+      "recall@20": 0.95,
+      "mrr@5": 0.7746,
+      "latency_ms": {
+        "p50": 33.2,
+        "p95": 43.7,
+        "mean": 34.6,
+        "max": 45.5
+      },
+      "misses": [
+        {
+          "id": "q03",
+          "query": "根据这段数据信息，有多少列是数值型数据？",
+          "goldSource": "python-100-days/Day66-80/73.深入浅出pandas-2.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q04",
+          "query": "在抓取需要动态加载内容的网站时，如果遇到页面元素通过JavaScript异步加载，应该使用什么工具或方法来模拟浏览器行为以正确获取数据？",
+          "goldSource": "python-100-days/番外篇/常见反爬策略及应对方案.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q28",
+          "query": "Selenium中用于自动化浏览器测试的核心组件是什么？",
+          "goldSource": "python-100-days/Day91-100/96.软件测试和自动化测试.md",
+          "goldRank": 8
+        }
+      ]
+    }
+  ],
+  "unanswerable_top1_similarity": {
+    "mean": 0.3588,
+    "max": 0.4038,
+    "min": 0.295
+  },
+  "answerable_top1_similarity": {
+    "mean": 0.7425,
+    "min": 0.5082
+  },
+  "sweep": [
+    {
+      "chunks": 100,
+      "scan_ms": 5.7,
+      "sql_ms": 23.9
+    },
+    {
+      "chunks": 250,
+      "scan_ms": 12.6,
+      "sql_ms": 26.8
+    },
+    {
+      "chunks": 500,
+      "scan_ms": 25.9,
+      "sql_ms": 25.7
+    },
+    {
+      "chunks": 1000,
+      "scan_ms": 54.0,
+      "sql_ms": 24.4
+    },
+    {
+      "chunks": 2000,
+      "scan_ms": 102.5,
+      "sql_ms": 24.5
+    },
+    {
+      "chunks": 9885,
+      "scan_ms": 559.8,
+      "sql_ms": 26.1
+    }
+  ]
+}

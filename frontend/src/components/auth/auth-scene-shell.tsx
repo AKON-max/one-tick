@@ -137,7 +137,7 @@ export function AuthSceneShell({ children }: { children: React.ReactNode }) {
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/30">
               <Leaf className="h-5 w-5" weight="fill" />
             </span>
-            Summer <span className="-ml-1 text-primary">Checkin</span>
+            One-Tick <span className="text-primary">一刻</span>
           </Link>
 
           {/* 主文案 */}
@@ -205,7 +205,18 @@ export function AuthSceneShell({ children }: { children: React.ReactNode }) {
           <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <Leaf className="size-4" weight="fill" />
           </span>
-          Summer Checkin
+          One-Tick <span className="text-primary">一刻</span>
+        </Link>
+
+        {/* 移动端返回入口：桌面左栏那个「返回产品进入页」在 lg 以下是 hidden，
+            手机上原本只剩左上角 logo 可点，没有「返回」字样，用户找不到回来的路。
+            这里在顶部右侧补一个显式按钮，和 logo 同一行，不额外占竖向空间。 */}
+        <Link
+          href="/"
+          className="absolute right-5 top-6 z-20 inline-flex h-9 items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3.5 text-[12px] font-semibold text-white transition-colors active:bg-white/20 lg:hidden"
+        >
+          <ArrowLeft className="size-3.5" weight="bold" />
+          返回展示页
         </Link>
 
         {/* 表单容器 */}

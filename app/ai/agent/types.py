@@ -1,5 +1,5 @@
 # ============================================================
-# Agent 类型定义（对应 src/lib/agent/types.ts，zod → Pydantic）
+# Agent 类型定义
 #
 # 字段名与 TS 保持一致（camelCase），Pydantic 模型约束
 # 对照 zod schema：长度/取值/默认值逐条对齐。
@@ -31,14 +31,14 @@ AgentRunStatus = Literal[
     "rejected",
 ]
 
-# ---- 任务草案（对应 planTaskDraftSchema） ----
+# ---- 任务草案 ----
 
 TaskCategory = Literal["study", "project", "review", "exercise"]
 TaskPriority = Literal["high", "normal", "low"]
 
 
 class TaskDraft(BaseModel):
-    """单条任务草案（对应 planTaskDraftSchema）"""
+    """单条任务草案"""
 
     title: str = Field(min_length=1, max_length=160)
     description: Optional[str] = Field(default=None, max_length=600)
@@ -48,14 +48,14 @@ class TaskDraft(BaseModel):
     priority: TaskPriority = "normal"
 
 
-# 别名：与原 TS 命名 planTaskDraftSchema 对齐
+# 别名：保持既有的 planTaskDraftSchema 命名
 PlanTaskDraft = TaskDraft
 
 
-# ---- 计划草案（对应 planDraftSchema） ----
+# ---- 计划草案 ----
 
 class PlanDraft(BaseModel):
-    """学习计划草案（对应 planDraftSchema）"""
+    """学习计划草案"""
 
     name: str = Field(min_length=1, max_length=120)
     description: Optional[str] = Field(default=None, max_length=600)
@@ -77,7 +77,7 @@ class AgentContextSnapshot(BaseModel):
 # ---- Agent 运行响应（AgentRunResponse） ----
 
 class AgentRunStepResponse(BaseModel):
-    """AgentRun 的步骤序列化（对应 serializeAgentRun 中的 steps）"""
+    """AgentRun 的步骤序列化"""
 
     id: str
     stepNumber: int
@@ -94,7 +94,7 @@ class AgentRunStepResponse(BaseModel):
 
 
 class AgentRunApprovalResponse(BaseModel):
-    """AgentRun 的审批序列化（对应 serializeAgentRun 中的 approvals）"""
+    """AgentRun 的审批序列化"""
 
     id: str
     action: str
@@ -106,7 +106,7 @@ class AgentRunApprovalResponse(BaseModel):
 
 
 class AgentRunResponse(BaseModel):
-    """Agent 运行响应（对应 AgentRunResponse）"""
+    """Agent 运行响应"""
 
     id: str
     mode: str

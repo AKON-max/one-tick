@@ -1,5 +1,5 @@
 # ============================================================
-# 待办路由（对应 src/app/api/todos/**）
+# 待办路由
 # ============================================================
 
 from datetime import datetime, timezone
@@ -19,7 +19,7 @@ router = APIRouter(prefix="/api/todos", tags=["todos"])
 
 class TodoCreateRequest(BaseModel):
     title: str
-    # 可选：老 localStorage 数据一次性迁移时保留原状态/创建时间（对齐原 TS 路由）
+    # 可选：一次性导入历史数据时保留原状态和创建时间
     completed: bool | None = None
     createdAt: str | None = None
 
@@ -52,7 +52,7 @@ def list_todos(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """待办列表；返回 {todos: [...]}，对齐原 src/app/api/todos/route.ts"""
+    """待办列表；返回 {todos: [...]}"""
     rows = (
         db.execute(
             select(Todo)
@@ -71,7 +71,7 @@ def create_todo(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """新建待办；返回 {todo: {...}}，对齐原 TS 路由（completed/createdAt 可选供迁移）"""
+    """新建待办；返回 {todo: {...}}"""
     created_at = None
     if req.createdAt:
         try:

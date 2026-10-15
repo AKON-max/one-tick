@@ -21,6 +21,8 @@ export interface TourStepConfig {
   data?: {
     /** 该步骤高亮期间把顶部原子导航展开（把隐藏的五个页面链接露出来） */
     expandNav?: boolean;
+    /** 去掉高亮描边与光晕（目标很大时那一圈亮线会显得很重） */
+    noRing?: boolean;
   };
 }
 
@@ -37,19 +39,19 @@ export const TOUR_ROUTE_ORDER = [
  * 步骤按页面分组；key 与 (dashboard) 路由路径一致。
  * 调整内容时把 TOUR_VERSION 升级（v2...），已看过旧版的用户会再看一遍新引导。
  */
-export const TOUR_VERSION = "v2";
+export const TOUR_VERSION = "v6";
 
 export const TOUR_SEGMENTS: Record<string, TourStepConfig[]> = {
   "/dashboard": [
     {
-      title: "欢迎来到 Summer Checkin 🌱",
+      title: "欢迎来到 One-Tick 🌱",
       description:
         "打卡 · 计划 · 阅读 · 专注——一个把学习节奏收拢到一起的栖息地。用几步带你逛一圈，马上就能上手。",
     },
     {
       title: "顶部导航",
       description:
-        "专注 · 小岛 · 计划 · 阅读 · 主页，五个页面来回切换，你的学习都从这里出发。",
+        "专注 · 小岛 · 计划 · 阅读 · 主页，五个页面来回切换，你的学习都从这里出发。紧挨着的「问问雨宝」随时能把 AI 学习伙伴叫出来。",
       selector: ".atomic-nav",
       side: "bottom",
       data: { expandNav: true },
@@ -62,11 +64,11 @@ export const TOUR_SEGMENTS: Record<string, TourStepConfig[]> = {
       side: "bottom",
     },
     {
-      title: "点亮 Star ⭐",
+      title: "叫出雨宝",
       description:
-        "喜欢这个项目的话，点一下右上角的 GitHub 按钮去「点亮 Star」——你的每一个 star，都是创作者最大的动力。",
-      selector: ".gh-icon-wrap",
-      side: "bottom",
+        "工作台右侧那颗会呼吸的光球就是雨宝，你的 AI 学习伙伴：可以拖着它换个顺手的位置，点一下就能进去让它拆计划、查数据、翻资料回答问题。",
+      selector: '[data-tour="ai-orb"]',
+      side: "left",
     },
     {
       title: "沉浸专注",
@@ -101,6 +103,8 @@ export const TOUR_SEGMENTS: Record<string, TourStepConfig[]> = {
         "把长期目标收拢成清晰、能执行的下一步，AI 还能帮你拆任务、定节奏。",
       selector: ".product-header",
       side: "bottom",
+      // 表头是一整行、很宽，描边光晕看着太重，这步只留遮罩挖出的亮框
+      data: { noRing: true },
     },
   ],
 

@@ -25,7 +25,7 @@ export function PlanForm({ plan }: PlanFormProps) {
   const isEditing = !!plan;
 
   async function handleAction(_prev: unknown, formData: FormData) {
-    // Day 10: Server Action 不再 throw，改为返回值判断
+    // Server Action 通过返回值传递结果
     const result = isEditing
       ? await updatePlan(plan!.id, formData)
       : await createPlan(formData);

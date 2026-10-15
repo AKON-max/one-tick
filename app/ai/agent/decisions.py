@@ -1,5 +1,5 @@
 # ============================================================
-# Phase 2: AgentDecision 服务（对应 src/lib/agent/decisions.ts）
+# AgentDecision 服务
 #
 # 记录 Agent 的每一次自主决策，供后续：
 # ① 追溯 — 查看 Agent 在过去做了哪些干预

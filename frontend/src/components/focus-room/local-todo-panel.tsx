@@ -43,7 +43,7 @@ export function LocalTodoPanel() {
   };
 
   return (
-    <section className="relative flex h-[520px] max-h-[62dvh] w-full min-w-0 shrink-0 flex-col overflow-hidden rounded-xl border border-white/[0.09] bg-[color-mix(in_srgb,var(--theme-background)_58%,transparent)] shadow-[0_18px_55px_rgba(0,0,0,0.16)] backdrop-blur-2xl">
+    <section className="relative flex h-[520px] max-h-[62dvh] w-full min-w-0 shrink-0 flex-col overflow-hidden rounded-xl border border-white/[0.09] bg-[color-mix(in_srgb,var(--theme-background)_58%,transparent)] shadow-[0_18px_55px_rgba(0,0,0,0.16)] backdrop-blur-2xl lg:max-h-none">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-primary/[0.055] to-transparent" />
 
       {/* 标题与进度 */}

@@ -1,9 +1,12 @@
 # ============================================================
-# RAG 向量检索 — Python 余弦相似度版（对应 src/lib/rag/retriever.ts）
+# RAG 向量检索
 #
-# DocumentChunk.embedding 在 db 中是 pgvector Vector 类型，
-# 采用全量加载后在内存中计算余弦相似度排序的方案。
-# 文档块数量通常不超过几百条，性能足够。
+# 生产路径 search_similar_chunks：把 Top-K 近邻计算交给数据库
+#   —— pgvector 余弦距离算子 `<=>`，由 hnsw 索引（见迁移 0004）加速，
+#      只把命中的文本取回应用层。
+#
+# 另保留旧实现 search_similar_chunks_scan（全量加载 + Python 余弦），
+# 仅供 scripts/rag_eval 做优化前后对比，生产代码不再调用。
 # ============================================================
 
 import json
@@ -11,15 +14,24 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Optional
 
-from sqlalchemy import select
+from sqlalchemy import select, text
 
 from app.db.session import SessionLocal
 from app.models.knowledge import DocumentChunk
 
+# HNSW 是近似近邻：ef_search 越大召回越高、延迟越高（pgvector 默认 40）。
+# 实测（9885 块语料 / 40 条评测问题，见 scripts/rag_eval/sweep_ef.py）：
+#   ef=40（默认） recall@20 = 87.5% / P50 1.1ms
+#   ef=100        recall@20 = 92.5% / P50 1.4ms   ← 采用
+#   精确全扫      recall@20 = 95.0% / P50 24.8ms
+# 取 100 的理由：用约 1/18 的延迟换回 5pp 召回；再往上加到 400 只是与精确持平，
+# 差异仅 1 条问题（n=40），不足以支撑继续调参，故停在这里。
+HNSW_EF_SEARCH = 100
+
 
 @dataclass
 class DocChunk:
-    """检索返回的文档块（不含 embedding，与原 TS 的 DocChunk 对齐）"""
+    """检索返回的文档块（不含 embedding）"""
 
     id: str
     sourceName: str
@@ -84,29 +96,73 @@ def parse_embedding(raw: Any) -> list[float]:
 
 # ---- 检索 ----
 
+def _to_doc_chunk(row: DocumentChunk) -> DocChunk:
+    return DocChunk(
+        id=row.id,
+        sourceName=row.sourceName,
+        sourceType=row.sourceType,
+        chunkIndex=row.chunkIndex,
+        content=row.content,
+        createdAt=row.createdAt,
+    )
+
+
+def _filters(source_filter: Optional[str], user_id: Optional[str]) -> list:
+    conditions = [DocumentChunk.embedding.isnot(None)]
+    if user_id:
+        conditions.append(DocumentChunk.userId == user_id)
+    if source_filter:
+        conditions.append(DocumentChunk.sourceName == source_filter)
+    return conditions
+
+
 def search_similar_chunks(
     query_embedding: list[float],
     top_k: int = 5,
     source_filter: Optional[str] = None,
     user_id: Optional[str] = None,
 ) -> list[DocChunk]:
-    """向量语义搜索（内存计算）
+    """向量语义搜索（数据库侧近邻查询）
 
     :param query_embedding: 查询向量
     :param top_k:           返回条数（默认 5）
     :param source_filter:   可选：限定来源（sourceName）
     :param user_id:         可选：限定用户
     """
-    conditions = [DocumentChunk.embedding.isnot(None)]
-    if user_id:
-        conditions.append(DocumentChunk.userId == user_id)
-    if source_filter:
-        conditions.append(DocumentChunk.sourceName == source_filter)
-
-    # 1. 全量加载有 embedding 的文档块（与原 TS 一致，最多取 1000 条）
+    distance = DocumentChunk.embedding.cosine_distance(query_embedding)
     stmt = (
         select(DocumentChunk)
-        .where(*conditions)
+        .where(*_filters(source_filter, user_id))
+        .order_by(distance)
+        .limit(top_k)
+    )
+    with SessionLocal() as db:
+        # 只作用于当前事务，不影响连接池里其它查询
+        db.execute(text(f"SET LOCAL hnsw.ef_search = {HNSW_EF_SEARCH}"))
+        rows = db.execute(stmt).scalars().all()
+
+    print(f"[Retriever] 近邻搜索 → {len(rows)} 条 (k={top_k}, ef_search={HNSW_EF_SEARCH})")
+    return [_to_doc_chunk(row) for row in rows]
+
+
+def search_similar_chunks_scan(
+    query_embedding: list[float],
+    top_k: int = 5,
+    source_filter: Optional[str] = None,
+    user_id: Optional[str] = None,
+) -> list[DocChunk]:
+    """【旧实现，仅供评测对比】全量加载 + Python 内计算余弦相似度
+
+    未加索引时的原始路径。两个已知问题（由 scripts/rag_eval 量化）：
+      ① 每次查询都要把最多 1000 条 × 1024 维向量从数据库搬到 Python 解析，
+         瓶颈不在算余弦，而在向量的序列化与传输；
+      ② limit(1000) 是隐式硬截断：知识库超过 1000 块后，
+         更早录入的内容永远进不了候选集，属于召回缺口。
+    """
+    # 1. 全量加载有 embedding 的文档块（最多取 1000 条，仅供评测对比）
+    stmt = (
+        select(DocumentChunk)
+        .where(*_filters(source_filter, user_id))
         .order_by(DocumentChunk.createdAt.desc())
         .limit(1000)
     )
@@ -140,14 +196,4 @@ def _rank_and_return(
         f"[Retriever] 余弦相似度搜索 → {len(top)}/{len(rows)} 条 (top={top_sim})"
     )
 
-    return [
-        DocChunk(
-            id=row.id,
-            sourceName=row.sourceName,
-            sourceType=row.sourceType,
-            chunkIndex=row.chunkIndex,
-            content=row.content,
-            createdAt=row.createdAt,
-        )
-        for row, _ in top
-    ]
+    return [_to_doc_chunk(row) for row, _ in top]

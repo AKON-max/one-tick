@@ -29,7 +29,7 @@ export default async function CheckinPage() {
   const cookieStore = await cookies();
   const sessionToken = cookieStore.get("session_token")?.value;
 
-  // 一次拉取签到页全部聚合数据（对应原 7 次 Prisma 查询）
+  // 一次拉取签到页全部聚合数据
   let summary: CheckinSummary | null = null;
   try {
     const res = await fetch(`${API_INTERNAL_URL}/api/checkins/summary`, {

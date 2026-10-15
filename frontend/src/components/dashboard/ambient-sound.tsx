@@ -54,7 +54,10 @@ export function AmbientSound() {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const cleanupFallbackRef = useRef<(() => void) | null>(null);
   const volumeRef = useRef(0.3);
-  volumeRef.current = volume;
+
+  useEffect(() => {
+    volumeRef.current = volume;
+  }, [volume]);
 
   // 1) 创建音频实例（仅一次）
   useEffect(() => {

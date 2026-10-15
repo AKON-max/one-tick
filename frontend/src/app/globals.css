@@ -909,7 +909,11 @@
   left: 50%;
   top: 16px;
   transform: translateX(-50%);
-  width: 176px;
+  display: flex;
+  align-items: center;
+  /* 折叠态 = 品牌 + 五个图标，宽度交给内容撑开；
+     悬停/聚焦时文字展开，胶囊跟着变宽（不再整块把导航藏起来） */
+  width: max-content;
   height: 48px;
   overflow: hidden;
   border: 1px solid var(--surface-card-border);
@@ -918,12 +922,11 @@
   padding: 7px;
   box-shadow: 0 16px 42px rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(24px) saturate(130%);
-  transition: width 480ms cubic-bezier(0.22, 1, 0.36, 1), background-color 300ms ease, border-color 300ms ease;
+  transition: background-color 300ms ease, border-color 300ms ease;
 }
 
 .atomic-nav:hover,
 .atomic-nav:focus-within {
-  width: 510px;
   border-color: var(--surface-nav-hover-border);
   background: var(--surface-nav-hover-bg);
 }
@@ -953,21 +956,29 @@
 }
 
 .atomic-nav__links {
-  width: 0;
-  margin-left: 0;
-  opacity: 0;
-  transform: translateX(-10px);
-  pointer-events: none;
-  transition: width 480ms cubic-bezier(0.22, 1, 0.36, 1), margin-left 480ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease 40ms, transform 360ms ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
 }
 
-.atomic-nav:hover .atomic-nav__links,
-.atomic-nav:focus-within .atomic-nav__links {
-  width: 326px;
+/* 折叠态只留图标（图标宽度固定，导航整体不会塌成一个小圆点）；
+   悬停/聚焦才把页面名展开 */
+.atomic-nav__link-label {
+  display: inline-block;
+  max-width: 0;
+  margin-left: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: max-width 420ms cubic-bezier(0.22, 1, 0.36, 1), margin-left 420ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease;
+}
+
+.atomic-nav:hover .atomic-nav__link-label,
+.atomic-nav:focus-within .atomic-nav__link-label {
+  max-width: 3.5rem;
   margin-left: 8px;
   opacity: 1;
-  transform: translateX(0);
-  pointer-events: auto;
 }
 
 .immersive-stage {
@@ -984,6 +995,7 @@
 }
 
 .rainforest-immersive .dashboard-nav,
+.rainforest-immersive .rainforest-orb-wrap,
 .rainforest-immersive .rainforest-orb,
 .rainforest-immersive .ambient-sound-control {
   display: none !important;
@@ -1185,9 +1197,18 @@
 }
 
 /* 探索雨林智能体入口（场景切换时 Orb 的颜色会完全跟着变） */
-.rainforest-orb {
+/* 悬浮球容器：位移交给容器，球本体只负责视觉 —— 常驻标签与首次引导气泡都跟着球走 */
+.rainforest-orb-wrap {
+  position: fixed;
   left: 0;
   top: 0;
+  z-index: 40;
+  width: 64px;
+  height: 64px;
+}
+
+.rainforest-orb {
+  position: relative;
   width: 64px;
   height: 64px;
   border: 0;
@@ -1199,6 +1220,57 @@
 
 .rainforest-orb:active {
   cursor: grabbing;
+}
+
+/* 常驻文字标签：不悬停也能看出这颗球是 AI 入口（球在右半屏贴左侧，反之贴右侧） */
+.rainforest-orb__label {
+  position: absolute;
+  right: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 12px;
+  border: 1px solid var(--surface-card-border);
+  border-radius: 999px;
+  background: var(--surface-nav-bg);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.26);
+  backdrop-filter: blur(18px);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.rainforest-orb-wrap[data-side="left"] .rainforest-orb__label {
+  right: auto;
+  left: calc(100% + 10px);
+}
+
+/* 首次进入的引导气泡：只在没看过时出现，点球或超时后消失 */
+.rainforest-orb__hint {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  right: 0;
+  width: max-content;
+  max-width: 210px;
+  padding: 9px 12px;
+  border: 1px solid var(--surface-card-border);
+  border-radius: 12px;
+  background: var(--surface-nav-hover-bg);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(20px);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 12px;
+  line-height: 1.55;
+  pointer-events: none;
+}
+
+.rainforest-orb-wrap[data-side="left"] .rainforest-orb__hint {
+  right: auto;
+  left: 0;
 }
 
 .rainforest-orb__halo {

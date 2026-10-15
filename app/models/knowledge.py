@@ -1,6 +1,5 @@
 # ============================================================
-# 知识库 / 文档模型（对应 prisma Document / DocumentChunk / KnowledgeDoc /
-#   PlanTemplate / DocumentTemplate）
+# 知识库 / 文档模型
 # ============================================================
 
 import uuid
@@ -22,7 +21,7 @@ def _now() -> datetime:
 
 
 class Document(Base):
-    """用户 Markdown 文档（对应 prisma Document，文档工作室用）"""
+    """用户 Markdown 文档"""
 
     __tablename__ = "document"
 
@@ -41,7 +40,7 @@ class Document(Base):
 
 
 class DocumentChunk(Base):
-    """文档分块（对应 prisma DocumentChunk，RAG 检索单元，embedding 向量）"""
+    """文档分块"""
 
     __tablename__ = "documentchunk"
 
@@ -63,7 +62,7 @@ class DocumentChunk(Base):
 
 
 class KnowledgeDoc(Base):
-    """知识库源文档（对应 prisma KnowledgeDoc，按 userId+sourceName 去重）"""
+    """知识库源文档"""
 
     __tablename__ = "knowledgedoc"
 
@@ -83,7 +82,7 @@ class KnowledgeDoc(Base):
 
 
 class PlanTemplate(Base):
-    """新用户引导计划模板（对应 prisma PlanTemplate，注册时克隆）"""
+    """新用户引导计划模板"""
 
     __tablename__ = "plantemplate"
 
@@ -97,7 +96,7 @@ class PlanTemplate(Base):
 
 
 class DocumentTemplate(Base):
-    """新用户引导文档模板（对应 prisma DocumentTemplate）"""
+    """新用户引导文档模板"""
 
     __tablename__ = "documenttemplate"
 

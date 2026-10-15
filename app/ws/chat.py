@@ -1,5 +1,5 @@
 # ============================================================
-# WebSocket 聊天端点（对应 server/index.ts）
+# WebSocket 聊天端点
 # 职责：实时聊天（单房间全局流）+ @AI 回复
 # 路由：/ws?token=xxx（由 app/main.py include 注册）
 # ============================================================
@@ -37,7 +37,7 @@ router = APIRouter()
 SESSION_COOKIE_NAME = "session_token"
 SESSION_COOKIE_LEGACY = "better-auth.session_token"
 
-# 幂等去重缓冲上限（对应 index.ts 的 200）
+# 幂等去重缓冲上限
 MAX_SEEN_CLIENT_IDS = 200
 
 # WS 关闭码：未登录/鉴权失败
@@ -45,7 +45,7 @@ CLOSE_CODE_UNAUTHORIZED = 1008
 
 
 async def heartbeat_loop() -> None:
-    """服务端定期检查连接活跃度，超时未响应则断开（对应 index.ts 的心跳清理）"""
+    """服务端定期检查连接活跃度，超时未响应则断开"""
     timeout_ms = settings.HEARTBEAT_INTERVAL_MS * 2
     while True:
         await asyncio.sleep(settings.HEARTBEAT_INTERVAL_MS / 1000)
@@ -61,7 +61,7 @@ async def heartbeat_loop() -> None:
 @router.websocket("/ws")
 async def ws_chat(websocket: WebSocket) -> None:
     """聊天室 WebSocket 端点：/ws?token=xxx（token 也可放 cookie）"""
-    # ---- 握手鉴权：从 query param 或 cookie 读 JWT（对应 index.ts 的 upgrade 鉴权）----
+    # ---- 握手鉴权：从 query param 或 cookie 读 JWT----
     token = websocket.query_params.get("token")
     if not token:
         token = (
@@ -71,7 +71,7 @@ async def ws_chat(websocket: WebSocket) -> None:
         )
     payload = decode_token(token) if token else None
     if payload is None or not payload.get("sub"):
-        # 未登录 / token 失效：直接关闭（对应 HTTP 401）
+        # 未登录 / token 失效：直接关闭
         await websocket.close(code=CLOSE_CODE_UNAUTHORIZED)
         return
     user_id = payload["sub"]
@@ -133,7 +133,7 @@ async def ws_chat(websocket: WebSocket) -> None:
 
 
 async def _handle_user_message(conn: Connection, msg: dict) -> None:
-    """处理客户端 message（对应 index.ts 的 handleUserMessage）"""
+    """处理客户端 message"""
     content = str(msg.get("content") or "").strip()
     client_id = str(msg.get("clientId") or "")
     if not content:
@@ -176,7 +176,7 @@ async def _handle_user_message(conn: Connection, msg: dict) -> None:
 
 
 async def _send_error(conn: Connection, code: str, reason: str) -> None:
-    """给单条连接发错误（对应 index.ts 的 sendError）"""
+    """给单条连接发错误"""
     try:
         await conn.ws.send_text(
             json.dumps({"type": TYPE_ERROR, "code": code, "reason": reason}, ensure_ascii=False)
@@ -186,7 +186,7 @@ async def _send_error(conn: Connection, code: str, reason: str) -> None:
 
 
 def _check_rate_limit(conn: Connection) -> bool:
-    """滑动窗口限流（对应 index.ts 的 checkRateLimit）"""
+    """滑动窗口限流"""
     now = int(time.time() * 1000)
     if now - conn.window_start > settings.RATE_LIMIT_WINDOW_MS:
         conn.window_start = now
@@ -200,7 +200,7 @@ _AI_MENTION_RE = re.compile(r"@温柔宝|@嘴欠宝|@雨宝|@AI|^\s*/ai(?=\s|$)"
 
 
 def _extract_ai_prompts(content: str) -> list[tuple[str, str]]:
-    """提取 @AI 触发（对应 index.ts 的 extractAIPrompts）；返回 [(prompt, ai_role), ...]"""
+    """提取 @AI 触发；返回 [(prompt, ai_role), ...]"""
     results: list[tuple[str, str]] = []
     for m in _AI_MENTION_RE.finditer(content):
         token = m.group(0)

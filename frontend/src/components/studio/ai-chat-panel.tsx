@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import type { ChatMessage } from "@/types";
 
 // ============================================================
-// 文档工作室右侧 AI 对话面板（Phase 3）
+// 文档工作室右侧 AI 对话面板
 // · 携带当前文档内容请求 /api/ai（studioContext）
 // · AI 可调用文档修改工具（updateDocument / updatePlanInfo）
 // · 流结束后通过 onStreamEnd 通知外层拉取最新文档并应用（可撤销）

@@ -95,9 +95,9 @@ export function RainforestExplorer({ initialPlanner = false }: { initialPlanner?
     if (!activeId) return;
     if (messages.length <= initialMsgCountRef.current) return;
     fetch(`/api/conversations/${activeId}/title`, { method: "PATCH" })
-      .then((res) => res.json())
+      .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
-        if (data.skipped) return;
+        if (!data || data.skipped || !data.title) return;
         setConversations((prev) =>
           prev.map((c) => (c.id === activeId ? { ...c, title: data.title } : c))
         );

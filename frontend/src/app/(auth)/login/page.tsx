@@ -4,13 +4,14 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
-import { Sparkle, Eye, EyeSlash, ArrowRight } from "@phosphor-icons/react";
+import { Sparkle, Eye, EyeSlash, ArrowRight, Compass } from "@phosphor-icons/react";
 import { toast } from "sonner";
 
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
+  const [guestLoading, setGuestLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -50,6 +51,25 @@ export default function LoginPage() {
       toast.error("登录出错，请重试");
     } finally {
       setLoading(false);
+    }
+  }
+
+  // 游客体验：后端即时开一个临时账号并签发登录态，直接进工作台
+  async function handleGuest() {
+    setGuestLoading(true);
+    try {
+      const result = await authClient.signInAsGuest();
+      if (result.error) {
+        toast.error(translateError(result.error.message || "游客登录失败"));
+        return;
+      }
+      toast.success("已进入游客体验");
+      const redirectTo = searchParams.get("redirect") || "/dashboard";
+      router.push(redirectTo);
+    } catch {
+      toast.error("游客登录出错，请重试");
+    } finally {
+      setGuestLoading(false);
     }
   }
 
@@ -122,6 +142,29 @@ export default function LoginPage() {
           )}
         </button>
       </form>
+
+      {/* 游客体验：免注册直接看内部界面 */}
+      <button
+        type="button"
+        onClick={handleGuest}
+        disabled={loading || guestLoading}
+        className="mt-3 flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-border/80 bg-background/40 text-sm font-medium text-foreground/80 transition-all hover:border-primary/40 hover:bg-primary/8 hover:text-foreground active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        {guestLoading ? (
+          <span className="flex items-center gap-2">
+            <span className="size-4 animate-spin rounded-full border-2 border-foreground/20 border-t-foreground/70" />
+            <span>正在准备体验账号…</span>
+          </span>
+        ) : (
+          <>
+            <Compass className="size-4 text-primary" weight="duotone" />
+            <span>游客体验 · 免注册进入</span>
+          </>
+        )}
+      </button>
+      <p className="mt-2 text-center text-[11px] leading-5 text-muted-foreground/60">
+        游客账号是临时体验账号，自带一份演示数据，7 天后自动清理
+      </p>
 
       <div className="mt-7 flex items-center gap-3 text-[11px] text-muted-foreground/70 before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
         <span>安全登录，数据只属于你</span>

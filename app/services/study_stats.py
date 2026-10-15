@@ -1,5 +1,5 @@
 # ============================================================
-# 学习统计服务（对应 src/lib/study-stats.ts）
+# 学习统计服务
 #
 # 打卡仅为小岛到访计数：不含时长/科目/心情。
 # 统计：打卡次数、今日打卡、连续天数、活跃计划进度。
@@ -72,7 +72,7 @@ def get_study_stats(db: Session, user_id: str) -> dict:
 
 
 def build_checkin_summary(db: Session, user_id: str) -> dict:
-    """签到页（小岛）聚合数据，对应 checkin/page.tsx 的 7 次 Prisma 查询"""
+    """签到页（小岛）聚合数据"""
     now = datetime.now(timezone.utc)
     today_start = _day_start(now)
 

@@ -5,34 +5,52 @@ __pycache__/
 venv/
 *.egg-info/
 .env
+.env.*
+!.env.example
+!**/.env.example
+*.pem
+*.key
 wheels/
 oss2tmp/
 
-# 前端（Next.js）
+# Frontend (Next.js)
 frontend/node_modules/
 frontend/.next/
 frontend/out/
 frontend/tsconfig.tsbuildinfo
 
-# 数据库与迁移备份
+# Database and local data
 *.db
 *.sqlite3
+/uploads/
+/knowledge/
 
-# 上传文件
-uploads/
-knowledge/
-
-# 构建/运行日志
+# Build and runtime logs
 *.log
+logs/
+*.tar.gz
+*.zip
 
 # IDE / OS
 .idea/
 .vscode/
 .DS_Store
 .trae/
+.codex-tmp/
 
-# 第三方参考副本（原 TS 项目，非本项目代码，不入库）
+# Third-party reference copies
 summer-checkin-master/
 
-# 测试
+# Test and coverage
 .pytest_cache/
+.coverage
+htmlcov/
+
+# Local-only interview, portfolio, and delivery material
+/portfolio/
+/architecture/
+/HANDOFF.md
+/e2e-st.txt
+/One-Tick项目面试讲解稿*.md
+/面试知识库_OneTick*.md
+/简历技术概念面试讲解手册.md

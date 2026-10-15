@@ -1,5 +1,5 @@
 # ============================================================
-# 计划路由（对应 src/app/api/plans/** + plans/actions.ts）
+# 计划路由
 # - 列表 / 详情 / 创建（默认文档+任务同步）/ 更新（文档→任务同步）/ 删除
 # - 任务列表 / 更新任务状态
 # ============================================================
@@ -124,7 +124,7 @@ def list_plans(
     db: Session = Depends(get_db),
     include_tasks: bool = Query(False),
 ):
-    """计划列表；include_tasks=true 时附带任务状态摘要（对应 plans 页进度计算）"""
+    """计划列表；include_tasks=true 时附带任务状态摘要"""
     rows = (
         db.execute(
             select(Plan).where(Plan.userId == user.id).order_by(Plan.updatedAt.desc())
@@ -236,7 +236,7 @@ def split_plan(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """任务重新拆分（对应 src/app/api/plans/[id]/split + lib/plan-split.ts）
+    """任务重新拆分
 
     AI 判断文档变化是否实质影响任务 → 需要则重新拆解并对账增删改。
     幂等：2 分钟内重复触发直接返回 alreadyRunning（不重复消耗 AI 配额）。
@@ -246,7 +246,7 @@ def split_plan(
     try:
         return split_plan_tasks(db, plan, user.id)
     except ValueError as e:
-        # 与原文路由一致：无可拆分内容 → 400，其余（AI 解析失败等）→ 500
+        # 无可拆分内容返回 400，其它解析或运行时错误返回 500
         status = 400 if "可拆分的内容" in str(e) else 500
         raise HTTPException(status_code=status, detail=str(e))
     except Exception as e:  # noqa: BLE001

@@ -44,7 +44,7 @@ export function RainforestFocusRoom() {
   }
 
   return (
-    <div className="flex flex-1 flex-col px-6 pt-8">
+    <div className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col px-6 pt-8">
       {/* 标题 */}
       <header className="product-header shrink-0">
         <div>
@@ -63,17 +63,11 @@ export function RainforestFocusRoom() {
         </button>
       </header>
 
-      {/* 三栏：番茄钟 | 背景 | 待办 */}
-      <div className="flex flex-1 items-center gap-0">
-        <div className="flex w-1/4 shrink-0 items-center px-2">
-          <PomodoroStation onStart={enterImmersive} />
-        </div>
-        <div className="flex min-w-0 flex-1 items-center justify-center px-2">
-          <PlantCard />
-        </div>
-        <div className="w-1/5 shrink-0 px-2">
-          <LocalTodoPanel />
-        </div>
+      {/* 三栏：专注计时 | 我的树 | 今日待办（等宽等高，窄屏自动堆叠） */}
+      <div className="grid w-full flex-1 grid-cols-1 items-center gap-5 pb-8 lg:grid-cols-3">
+        <PomodoroStation onStart={enterImmersive} />
+        <PlantCard />
+        <LocalTodoPanel />
       </div>
     </div>
   );

@@ -138,7 +138,7 @@ export function CheckinShowcase() {
               <span style={{ color: accent }}> 专注的心情</span>
             </h2>
             <p className="mt-5 max-w-md text-base leading-relaxed text-white/56">
-              Summer Checkin 为你准备了雨林 / 雪日 / 暖云三种沉浸式场景，
+              One-Tick 为你准备了雨林 / 雪日 / 暖云三种沉浸式场景，
               每种都带有专属配色、背景与氛围——不管今天想听雨、看雪还是看云，
               都能找到一个让你愿意坐下来的角落。
             </p>

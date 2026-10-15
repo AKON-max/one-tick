@@ -1,0 +1,296 @@
+{
+  "corpus_chunks": 9885,
+  "question_count": 50,
+  "answerable_count": 40,
+  "unanswerable_count": 10,
+  "hnsw_index": true,
+  "k_final": 5,
+  "k_recall": 20,
+  "paths": [
+    {
+      "path": "scan",
+      "questions": 40,
+      "hit@5": 0.075,
+      "recall@20": 0.075,
+      "mrr@5": 0.075,
+      "latency_ms": {
+        "p50": 271.1,
+        "p95": 300.0,
+        "mean": 275.1,
+        "max": 300.6
+      },
+      "misses": [
+        {
+          "id": "q01",
+          "query": "为什么在定义只有一个元素的元组时，必须在元素后面加一个逗号？",
+          "goldSource": "python-100-days/Day01-20/10.常用数据结构之元组.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q02",
+          "query": "K-Means聚类算法的缺点中，哪一个与初始值设定有关？",
+          "goldSource": "python-100-days/Day81-90/86.K-Means聚类算法.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q03",
+          "query": "根据这段数据信息，有多少列是数值型数据？",
+          "goldSource": "python-100-days/Day66-80/73.深入浅出pandas-2.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q05",
+          "query": "在回归模型中，当输入变量 x 等于 0 时，预测值由哪个参数决定？",
+          "goldSource": "python-100-days/Day81-90/85.回归模型.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q06",
+          "query": "在Python中，为了实现跨多台机器的应用程序解耦和并发处理，通常会使用哪种协议作为消息队列的标准化实现？",
+          "goldSource": "python-100-days/Day31-35/31.Python语言进阶.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q07",
+          "query": "哪里可以找到关于线性代数、概率论和统计学等机器学习数学基础的资源？",
+          "goldSource": "python-100-days/Day91-100/100.补充内容.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q08",
+          "query": "如何通过余弦相似度判断两个词向量的相似程度？",
+          "goldSource": "python-100-days/Day81-90/89.自然语言处理入门.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q09",
+          "query": "在电商秒杀场景中，为什么使用Redis的DECR原语来减库存可以有效防止超卖？",
+          "goldSource": "python-100-days/Day91-100/97.电商网站技术要点剖析.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q10",
+          "query": "这个DatetimeIndex的频率是什么？",
+          "goldSource": "python-100-days/Day66-80/77.深入浅出pandas-6.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q11",
+          "query": "该视图函数返回的JSON数据中，用于存放教师好评数量的字段名是什么？",
+          "goldSource": "python-100-days/Day46-60/50.制作报表.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q12",
+          "query": "如果我想获取并使用资料中提到的那张图，按照说明必须附带引用哪篇文献？",
+          "goldSource": "python-100-days/Day81-90/81.浅谈机器学习.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q13",
+          "query": "如果还没有Docker ID，应该访问哪个网址来创建账号？",
+          "goldSource": "python-100-days/Day91-100/92.Docker容器技术详解.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q14",
+          "query": "执行 systemctl enable firewalld 命令后，系统创建了哪两个符号链接？",
+          "goldSource": "python-100-days/Day31-35/34-35.玩转Linux操作系统.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q15",
+          "query": "在计算 fac(5) 的递归过程中，当递归到达 fac(1) 时，函数调用栈开始如何处理？",
+          "goldSource": "python-100-days/Day01-20/17.函数高级应用.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q16",
+          "query": "在 fetch_json 函数中，每次循环请求的 URL 中的 sn 参数是如何计算的？",
+          "goldSource": "python-100-days/Day61-65/63.并发编程在爬虫中的应用.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q17",
+          "query": "在执行 explain 查询时，MySQL 显示的 key 列值为 fk_emp_dno，这表示使用了什么类型的索引？",
+          "goldSource": "python-100-days/Day91-100/93.MySQL性能优化.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q18",
+          "query": "在绘制堆叠折线图时，plt.stackplot 使用的 days 变量包含哪些数值？",
+          "goldSource": "python-100-days/Day66-80/79.数据可视化-2.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q19",
+          "query": "在JWT解码过程中，如果遇到无效的令牌或过期令牌，会抛出什么异常并触发怎样的错误提示？",
+          "goldSource": "python-100-days/Day46-60/54.RESTful架构和DRF入门.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q21",
+          "query": "在生成双色球选号结果的代码中，从红色球列表中随机抽取6个球使用的是哪个函数？",
+          "goldSource": "python-100-days/Day01-20/09.常用数据结构之列表-2.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q22",
+          "query": "异步编程被称为什么类型的并发方式，它通过什么机制来提升CPU利用率？",
+          "goldSource": "python-100-days/Day61-65/63.Python中的并发编程-3.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q23",
+          "query": "在面试中，如果被问到爬虫项目中抓取的数据量，应该准备回答什么类型的具体信息？",
+          "goldSource": "python-100-days/Day91-100/99.面试中的公共问题.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q24",
+          "query": "在Django项目中配置debug_toolbar时，如何设置工具栏默认折叠显示？",
+          "goldSource": "python-100-days/Day91-100/95.使用Django开发商业项目.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q25",
+          "query": "在Python中比较列表nums1和nums3的大小关系时，结果为True的比较操作符是什么？",
+          "goldSource": "python-100-days/Day01-20/08.常用数据结构之列表-1.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q26",
+          "query": "开发Python商业项目时，推荐使用的集成开发环境（IDE）是什么？",
+          "goldSource": "python-100-days/Day01-20/02.第一个Python程序.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q27",
+          "query": "使用seaborn绘制图表时，建议通过什么方式来学习其具体用法？",
+          "goldSource": "python-100-days/Day66-80/80.数据可视化-3.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q28",
+          "query": "Selenium中用于自动化浏览器测试的核心组件是什么？",
+          "goldSource": "python-100-days/Day91-100/96.软件测试和自动化测试.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q29",
+          "query": "在Python中使用pdf_canvas绘制文本时，如何设置字体为Font2且字号为40，并将文字“你好，世界！”居中显示在页面正上方？",
+          "goldSource": "python-100-days/Day21-30/27.Python操作PDF文件.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q31",
+          "query": "如何从请求返回的JSON数据中提取新闻标题和链接并逐条打印出来？",
+          "goldSource": "python-100-days/Day21-30/22.对象的序列化和反序列化.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q32",
+          "query": "在DRF中，如果要创建一个支持GET请求并返回数据列表的视图类，应该继承哪个基类？",
+          "goldSource": "python-100-days/Day46-60/55.RESTful架构和DRF进阶.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q33",
+          "query": "在使用pymysql删除MySQL数据库中指定部门时，如何通过游标对象执行带参数的DELETE语句并判断是否成功删除？",
+          "goldSource": "python-100-days/Day36-45/44.Python接入MySQL数据库.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q34",
+          "query": "在Vue实例的created钩子中，如何通过fetch请求获取API接口数据并将其赋值给subjects属性？",
+          "goldSource": "python-100-days/Day46-60/53.前后端分离开发入门.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q35",
+          "query": "Windows用户应如何启动支持conda命令的命令行环境来管理Python项目依赖？",
+          "goldSource": "python-100-days/Day66-80/67.环境准备.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q36",
+          "query": "为什么在互联网产品开发中不建议将大量复杂运算放在数据库过程中执行？",
+          "goldSource": "python-100-days/Day36-45/42.视图、函数和过程.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q37",
+          "query": "NumPy中的ndarray相比Python原生list在数据存取和性能方面有哪些优势？",
+          "goldSource": "python-100-days/Day66-80/68.NumPy的应用-1.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q38",
+          "query": "从查询结果来看，InnoDB存储引擎支持哪些特性？",
+          "goldSource": "python-100-days/Day36-45/37.SQL详解之DDL.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q39",
+          "query": "在sub_task函数中，当queue的值小于50时，每次循环会执行什么操作并更新counter？",
+          "goldSource": "python-100-days/Day61-65/63.Python中的并发编程-2.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q40",
+          "query": "在MySQL的INSERT语句中，向tb_tags表插入了多少条记录？",
+          "goldSource": "python-100-days/Day36-45/41.MySQL新特性.md",
+          "goldRank": 0
+        }
+      ]
+    },
+    {
+      "path": "sql",
+      "questions": 40,
+      "hit@5": 0.9,
+      "recall@20": 0.925,
+      "mrr@5": 0.7621,
+      "latency_ms": {
+        "p50": 7.1,
+        "p95": 8.6,
+        "mean": 7.2,
+        "max": 9.6
+      },
+      "misses": [
+        {
+          "id": "q03",
+          "query": "根据这段数据信息，有多少列是数值型数据？",
+          "goldSource": "python-100-days/Day66-80/73.深入浅出pandas-2.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q04",
+          "query": "在抓取需要动态加载内容的网站时，如果遇到页面元素通过JavaScript异步加载，应该使用什么工具或方法来模拟浏览器行为以正确获取数据？",
+          "goldSource": "python-100-days/番外篇/常见反爬策略及应对方案.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q12",
+          "query": "如果我想获取并使用资料中提到的那张图，按照说明必须附带引用哪篇文献？",
+          "goldSource": "python-100-days/Day81-90/81.浅谈机器学习.md",
+          "goldRank": 0
+        },
+        {
+          "id": "q28",
+          "query": "Selenium中用于自动化浏览器测试的核心组件是什么？",
+          "goldSource": "python-100-days/Day91-100/96.软件测试和自动化测试.md",
+          "goldRank": 8
+        }
+      ]
+    }
+  ],
+  "unanswerable_top1_similarity": {
+    "mean": 0.345,
+    "max": 0.4038,
+    "min": 0.295
+  },
+  "answerable_top1_similarity": {
+    "mean": 0.7424,
+    "min": 0.5011
+  }
+}

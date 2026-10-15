@@ -8,3 +8,21 @@ server.log
 .idea/
 .vscode/
 scripts/
+# 前端有自己的镜像（compose 里 web 服务独立构建），后端镜像不需要它：
+# frontend/node_modules + .next 有 2GB+，带进后端上下文会让 build context 传输变成几分钟
+frontend/
+# 旧 TS 版项目残留目录，后端构建不需要
+summer-checkin-master/
+
+# Repository documentation and tests are not needed in the runtime image
+docs/
+specs/
+tests/
+.github/
+README.md
+CONTRIBUTING.md
+SECURITY.md
+AGENTS.md
+portfolio/
+architecture/
+HANDOFF.md

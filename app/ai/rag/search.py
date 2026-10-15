@@ -1,5 +1,5 @@
 # ============================================================
-# Day 16 RAG: 高级搜索（召回 + 重排）（对应 src/lib/rag/search.ts）
+# RAG 高级搜索：召回 + 重排
 #
 # search_knowledge(query, user_id?)
 #   1. query → Embedding
@@ -48,9 +48,14 @@ def search_knowledge(
         print("[Search] 未找到相关结果")
         return {"query": query, "results": [], "searchedChunks": 0}
 
-    # 统计知识库总 chunk 数（仅用于日志，与原 TS 一致）
+    # 统计检索范围（当前用户 + 可选来源），仅用于日志和返回元数据
+    count_stmt = select(func.count(DocumentChunk.id))
+    if user_id:
+        count_stmt = count_stmt.where(DocumentChunk.userId == user_id)
+    if source_filter:
+        count_stmt = count_stmt.where(DocumentChunk.sourceName == source_filter)
     with SessionLocal() as db:
-        total_chunks = db.execute(select(func.count(DocumentChunk.id))).scalar() or 0
+        total_chunks = db.execute(count_stmt).scalar() or 0
 
     documents = [c.content for c in recalled]
 

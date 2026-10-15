@@ -890,6 +890,8 @@ type LearningIslandProps = {
   todayCheckin?: boolean;
   /** 岛上树的数量 = 盆栽成熟收获次数（不再是打卡数） */
   treeCount?: number;
+  /** 正交相机缩放：越大岛在画布中越大（默认 62，用于全屏小岛；卡片预览可调小） */
+  zoom?: number;
 };
 
 export function LearningIsland({
@@ -898,6 +900,7 @@ export function LearningIsland({
   totalHours = 0,
   todayCheckin = false,
   treeCount = 0,
+  zoom = 62,
 }: LearningIslandProps) {
   const unlockedCount = Math.min(totalTiles, INITIAL_TILES + totalCheckins * TILES_PER_CHECKIN);
   // 树 = 盆栽浇水成熟收获的次数（由花园系统驱动，见 plant-card）
@@ -932,7 +935,7 @@ export function LearningIsland({
           dpr={[1, 1.65]}
           shadows
           orthographic
-          camera={{ position: [8, 8, 9], zoom: 62, near: 0.1, far: 120 }}
+          camera={{ position: [8, 8, 9], zoom, near: 0.1, far: 120 }}
           gl={{ antialias: true, alpha: true }}
         >
           <ambientLight intensity={1.4} />

@@ -1,5 +1,5 @@
 # ============================================================
-# Agent 工具（对应 src/lib/tools/agent-tools.ts）
+# Agent 工具
 # ① breakdownPlanTasks — 将计划拆分为每日/每周具体任务（Agent 规划阶段）
 # ② getPlanTasks       — 查询计划的所有任务及统计（Agent 观察阶段）
 # ③ updateTaskStatus   — 更新任务状态（Agent 执行阶段）

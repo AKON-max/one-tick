@@ -1,5 +1,5 @@
 # ============================================================
-# 对话会话路由（对应 src/app/api/conversations/** + messages）
+# 对话会话路由
 # ============================================================
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -61,7 +61,7 @@ def list_conversations(
 ):
     """对话列表（按更新时间倒序，只带首条消息预览）
 
-    返回 {conversations: [...]}，对齐原 src/app/api/conversations/route.ts。
+    返回 {conversations: [...]}。
     """
     conversations = (
         db.execute(
@@ -125,11 +125,12 @@ def get_conversation(
 @router.patch("/{conv_id}/title")
 def update_conversation_title(
     conv_id: str,
-    req: ConversationCreateRequest,
+    # 前端以「空 body」调用本接口来触发 AI 生成标题；声明成必填会让 FastAPI 直接返回 422
+    req: ConversationCreateRequest | None = None,
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """更新对话标题；对齐原 title/route.ts：
+    """更新对话标题：
     - 带 title → 直接更新
     - 空 body → 按完整对话历史用 AI 生成标题；不足一轮对话返回 {skipped: true}
     """
@@ -137,7 +138,7 @@ def update_conversation_title(
     if conv is None or conv.userId != user.id:
         raise HTTPException(status_code=404, detail="Not found")
 
-    if req.title:
+    if req and req.title:
         conv.title = req.title.strip()
         db.commit()
         return {"title": conv.title, "skipped": False}

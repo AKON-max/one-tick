@@ -13,6 +13,12 @@
   transition: none !important;
 }
 
+/* ── 个别步骤去掉描边与光晕（目标是一整行很宽的表头时，那一圈亮线会显得很重，
+   只保留遮罩挖出的亮框即可）。标记由 onboarding-provider 按步骤写/清 ── */
+body.tour-no-ring .driver-active-element {
+  box-shadow: none !important;
+}
+
 /* ── 弹层：深色玻璃，贴合场景玻璃面板质感 ── */
 .tour-popover.driver-popover {
   --tour-popover-bg: color-mix(in srgb, var(--theme-background) 82%, #05080a);
@@ -138,19 +144,17 @@
   pointer-events: none;
 }
 
-/* ── 引导期间展开顶部原子导航（把隐藏的五个页面链接露出来） ── */
+/* ── 引导期间展开顶部原子导航（把折叠起来的页面链接标签露出来） ── */
 .atomic-nav--tour {
-  width: 510px;
   border-color: var(--surface-nav-hover-border);
   background: var(--surface-nav-hover-bg);
   transition: none; /* 展开即时生效，保证高亮裁切位置与元素一致 */
 }
-.atomic-nav--tour .atomic-nav__links {
-  width: 326px;
+.atomic-nav--tour .atomic-nav__link-label {
+  max-width: 3.5rem;
   margin-left: 8px;
   opacity: 1;
-  transform: translateX(0);
-  pointer-events: auto;
+  transition: none;
 }
 
 /* ── 文档工作台引导：外观跟随文档主题（--tour-doc-* 由 MarkdownStudio 启动时

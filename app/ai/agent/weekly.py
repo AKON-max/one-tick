@@ -1,5 +1,5 @@
 # ============================================================
-# 周度学习周报：显式生成（对应 src/lib/agent/weekly.ts）
+# 周度学习周报：显式生成
 #
 # 周日由 cron daily 调用；用 observe + fallbackAnalysis（纯统计，不耗 LLM）
 # 汇总「本周一 ~ 今天」的真实数据，落库为 report 通知。
@@ -31,7 +31,7 @@ def create_weekly_report_notification(user_id: str, db=None) -> dict | None:
     week_start_local = (now_local - timedelta(days=now_local.weekday())).replace(
         hour=0, minute=0, second=0, microsecond=0
     )
-    # Prisma 会把本地零点按 UTC 序列化后与 createdAt 比较，这里等价转换
+    # 时间统一按 UTC 比较；这里把本地周起点转换为 UTC
     week_start_utc = week_start_local.astimezone(timezone.utc)
 
     own = db is None

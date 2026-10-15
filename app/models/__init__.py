@@ -1,5 +1,5 @@
 # ============================================================
-# 模型统一导出（对应 prisma/schema.prisma 的全部 26 张表）
+# 模型统一导出
 # 按模块组织：
 #   base.py     — user / session / account（认证）
 #   study.py    — plan / plantask / todo / checkin / studyrecord

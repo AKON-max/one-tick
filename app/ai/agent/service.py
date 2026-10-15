@@ -1,11 +1,11 @@
 # ============================================================
-# Agent 计划生成 & 运行管理服务（对应 src/lib/agent/service.ts）
+# Agent 计划生成 & 运行管理服务
 #
 # 核心能力：
 # ① generate_plan_for_plan — 为已有计划生成 PlanDraft 并拆分成 PlanTask
 #    （LLM 结构化输出 + fallback_draft 规则兜底，MAX_TASKS=40）
 # ② 运行管理 — create/decide/cancel/list/get/serialize AgentRun
-# ③ plan_draft_to_markdown — 计划草案 → 详细文档（对应 plan-serialize.ts）
+# ③ plan_draft_to_markdown — 计划草案 → 详细文档
 # ============================================================
 
 import json
@@ -28,7 +28,7 @@ def _now_utc() -> datetime:
 
 
 # ============================================================
-# 计划草案 → Markdown 文档（对应 src/lib/studio/plan-serialize.ts 的 planDraftToMarkdown）
+# 计划草案 → Markdown 文档
 # ============================================================
 
 TASK_CATEGORY_LABEL = {
@@ -81,7 +81,7 @@ def _render_task_checklist(tasks: list[dict]) -> list[str]:
 
 
 def plan_draft_to_markdown(draft) -> str:
-    """计划草案 → 详细计划文档（对应 planDraftToMarkdown）
+    """计划草案 → 详细计划文档
 
     结构： # 名称 / ## 目标 / ## 计划说明 / ## 前提假设 / ## 学习指导 / ## 任务安排 / ## 学习笔记
     """
@@ -188,7 +188,7 @@ def fallback_draft(goal: str) -> dict:
 
 
 # ============================================================
-# 上下文快照（对应 collectContext）
+# 上下文快照
 # ============================================================
 
 def collect_context(user_id: str) -> AgentContextSnapshot:
@@ -247,7 +247,7 @@ def collect_context(user_id: str) -> AgentContextSnapshot:
 
 
 # ============================================================
-# LLM 草案生成（对应 generateDraft / parseDraft / extractJsonText）
+# LLM 草案生成
 # ============================================================
 
 def _extract_json_text(text: str) -> str:
@@ -341,7 +341,7 @@ def generate_draft(
 
 
 # ============================================================
-# 为已有计划生成内容（对应 generatePlanForPlan）
+# 为已有计划生成内容
 # ============================================================
 
 def generate_plan_for_plan(
@@ -403,8 +403,7 @@ def generate_plan_for_plan(
 
 
 # ============================================================
-# AgentRun 运行管理（对应 getAgentRunForUser / listAgentRuns /
-#   createAgentRun / decideAgentApproval / cancelAgentRun / serializeAgentRun）
+# AgentRun 运行管理
 # ============================================================
 
 def get_agent_run_for_user(run_id: str, user_id: str) -> AgentRun | None:
@@ -552,7 +551,7 @@ def decide_agent_approval(
     decision: str,
     reason: str | None = None,
 ) -> AgentRun | None:
-    """用户确认/拒绝计划草案（对应 decideAgentApproval）"""
+    """用户确认/拒绝计划草案"""
     run = get_agent_run_for_user(run_id, user_id)
     if run is None:
         return None
@@ -682,7 +681,7 @@ def decide_agent_approval(
 
 
 def cancel_agent_run(user_id: str, run_id: str) -> AgentRun | None:
-    """取消一次 AgentRun（对应 cancelAgentRun）"""
+    """取消一次 AgentRun"""
     run = get_agent_run_for_user(run_id, user_id)
     if run is None:
         return None
@@ -710,7 +709,7 @@ def cancel_agent_run(user_id: str, run_id: str) -> AgentRun | None:
 
 
 def serialize_agent_run(run: AgentRun) -> dict:
-    """AgentRun ORM → AgentRunResponse dict（对应 serializeAgentRun）"""
+    """AgentRun ORM → AgentRunResponse dict"""
 
     def _iso(dt) -> str | None:
         return dt.isoformat() if dt else None

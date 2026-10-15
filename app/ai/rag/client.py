@@ -1,6 +1,6 @@
 # ============================================================
 # Embedding 服务客户端 — 对接 OpenAI 兼容 Embedding API
-# （对应 src/lib/rag/client.ts）
+#
 #
 # 走模型池 embedding 档（text-embedding-v4 优先，v2 兜底），
 # 不计入用户 token 精力条。自动分批，每批最多 10 条
