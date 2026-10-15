@@ -61,6 +61,14 @@ app/
 └── main.py       FastAPI 入口
 ```
 
+## 架构图
+
+![One-Tick runtime architecture](architecture/one-tick.architecture.png)
+
+- 交互式架构图：[`architecture/one-tick.architecture.html`](architecture/one-tick.architecture.html)
+- 架构源文件：[`architecture/one-tick.architecture.json`](architecture/one-tick.architecture.json)
+- 维护交接：[`HANDOFF.md`](HANDOFF.md)
+
 ## AI 交互开发
 
 ### 1. `/api/ai` 对话链路

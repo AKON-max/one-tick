@@ -48,8 +48,12 @@ htmlcov/
 
 # Local-only interview, portfolio, and delivery material
 /portfolio/
-/architecture/
-/HANDOFF.md
+/architecture/*
+!/architecture/README.md
+!/architecture/one-tick.architecture.json
+!/architecture/one-tick.architecture.html
+!/architecture/one-tick.architecture.png
+/HANDOFF.local.md
 /e2e-st.txt
 /One-Tick项目面试讲解稿*.md
 /面试知识库_OneTick*.md

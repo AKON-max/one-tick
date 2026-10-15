@@ -1,0 +1,261 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "One-Tick 运行时架构",
+    "locale": "zh-CN",
+    "quality_profile": "showcase",
+    "viewBox": [1240, 740],
+    "views": [
+      {
+        "id": "request-path",
+        "label": "主请求链路",
+        "focus": ["users", "nginx", "nextjs", "fastapi", "postgres"],
+        "note": "从浏览器进入同域网关，页面由 Next.js 渲染，API 与数据由 FastAPI 和 PostgreSQL 处理。"
+      },
+      {
+        "id": "ai-path",
+        "label": "AI 与知识库",
+        "focus": ["users", "nginx", "fastapi", "ai", "postgres", "providers"],
+        "note": "AI 路由组合会话记忆、RAG 检索、工具调用和模型池降级。"
+      },
+      {
+        "id": "realtime-path",
+        "label": "实时聊天室",
+        "focus": ["users", "nginx", "websocket", "ai", "postgres"],
+        "note": "WebSocket 长连接维护在线房间，并复用 AI 编排能力生成角色回复。"
+      },
+      {
+        "id": "asset-path",
+        "label": "对象存储直传",
+        "focus": ["users", "fastapi", "oss"],
+        "note": "后端只签发上传凭证，浏览器直接将头像和壁纸上传到阿里云 OSS。"
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "users",
+      "type": "external",
+      "label": "学习者浏览器",
+      "sublabel": "React UI / WSS / Upload",
+      "pos": [40, 320],
+      "size": [150, 72]
+    },
+    {
+      "id": "nginx",
+      "type": "cloud",
+      "label": "Nginx 同域网关",
+      "sublabel": ":80",
+      "tag": "页面 / API / WSS",
+      "pos": [250, 320],
+      "size": [160, 72]
+    },
+    {
+      "id": "nextjs",
+      "type": "frontend",
+      "label": "Next.js Web App",
+      "sublabel": "App Router / React 19 / 3D",
+      "tag": "SSR + Server Actions",
+      "brand": "next-js",
+      "pos": [440, 90],
+      "size": [190, 78]
+    },
+    {
+      "id": "fastapi",
+      "type": "backend",
+      "label": "FastAPI 核心 API",
+      "sublabel": "REST :8001 / JWT",
+      "tag": "17 routers",
+      "brand": "fastapi",
+      "pos": [440, 320],
+      "size": [190, 78]
+    },
+    {
+      "id": "learning",
+      "type": "backend",
+      "label": "学习业务域",
+      "sublabel": "打卡 / 计划 / 专注 / 农场",
+      "tag": "用户隔离",
+      "pos": [440, 540],
+      "size": [190, 78]
+    },
+    {
+      "id": "websocket",
+      "type": "messagebus",
+      "label": "WebSocket 聊天室",
+      "sublabel": "在线连接 / 心跳 / 广播",
+      "tag": "/ws",
+      "pos": [690, 260],
+      "size": [190, 78]
+    },
+    {
+      "id": "ai",
+      "type": "backend",
+      "label": "AI 编排层",
+      "sublabel": "Agent / RAG / Memory / Tools",
+      "tag": "多轮工具调用",
+      "pos": [690, 110],
+      "size": [190, 84]
+    },
+    {
+      "id": "postgres",
+      "type": "database",
+      "label": "PostgreSQL + pgvector",
+      "sublabel": ":5432 / pgdata",
+      "tag": "业务数据 + 向量索引",
+      "brand": "postgresql",
+      "pos": [970, 320],
+      "size": [180, 84]
+    },
+    {
+      "id": "providers",
+      "type": "external",
+      "label": "AI 模型服务",
+      "sublabel": "Agnes / DashScope",
+      "tag": "自动降级与限额",
+      "pos": [970, 80],
+      "size": [180, 84]
+    },
+    {
+      "id": "oss",
+      "type": "cloud",
+      "label": "阿里云 OSS",
+      "sublabel": "avatars / wallpapers",
+      "tag": "预签名直传",
+      "brand": "alibaba-cloud",
+      "pos": [40, 540],
+      "size": [160, 78]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Docker Compose 运行时",
+      "wraps": ["nginx", "nextjs", "fastapi", "learning", "websocket", "ai", "postgres"]
+    }
+  ],
+  "connections": [
+    {
+      "id": "users-to-nginx",
+      "from": "users",
+      "to": "nginx",
+      "label": "HTTPS :80",
+      "variant": "emphasis"
+    },
+    {
+      "id": "nginx-to-nextjs",
+      "from": "nginx",
+      "to": "nextjs",
+      "label": "页面与静态资源"
+    },
+    {
+      "id": "nginx-to-fastapi",
+      "from": "nginx",
+      "to": "fastapi",
+      "label": "REST /api/*",
+      "variant": "emphasis",
+      "labelAt": [388, 294]
+    },
+    {
+      "id": "fastapi-to-websocket",
+      "from": "fastapi",
+      "to": "websocket",
+      "label": "WSS /ws",
+      "variant": "dashed",
+      "labelAt": [620, 225]
+    },
+    {
+      "id": "nextjs-to-fastapi",
+      "from": "nextjs",
+      "to": "fastapi",
+      "label": "服务端 fetch + Cookie",
+      "variant": "dashed",
+      "labelAt": [535, 245]
+    },
+    {
+      "id": "fastapi-to-learning",
+      "from": "fastapi",
+      "to": "learning",
+      "label": "领域路由",
+      "labelAt": [535, 470]
+    },
+    {
+      "id": "fastapi-to-ai",
+      "from": "fastapi",
+      "to": "ai",
+      "label": "AI 请求"
+    },
+    {
+      "id": "websocket-to-ai",
+      "from": "websocket",
+      "to": "ai",
+      "label": "角色消息",
+      "variant": "dashed"
+    },
+    {
+      "id": "fastapi-to-postgres",
+      "from": "fastapi",
+      "to": "postgres",
+      "label": "SQLAlchemy",
+      "variant": "emphasis",
+      "labelAt": [800, 420]
+    },
+    {
+      "id": "ai-to-postgres",
+      "from": "ai",
+      "to": "postgres",
+      "label": "RAG / 记忆",
+      "variant": "dashed"
+    },
+    {
+      "id": "ai-to-providers",
+      "from": "ai",
+      "to": "providers",
+      "label": "Chat / Embedding",
+      "variant": "dashed"
+    },
+    {
+      "id": "fastapi-to-oss",
+      "from": "fastapi",
+      "to": "oss",
+      "label": "签发上传凭证",
+      "variant": "dashed"
+    },
+    {
+      "id": "users-to-oss",
+      "from": "users",
+      "to": "oss",
+      "label": "预签名直传",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "入口与体验",
+      "items": [
+        "Nginx 将页面、REST 和 WebSocket 放在同一域名下",
+        "Next.js 负责 App Router、Server Actions、认证守卫和 3D 场景"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "业务与数据",
+      "items": [
+        "FastAPI 挂载 17 个用户级路由，覆盖打卡、计划、专注、农场和文档",
+        "PostgreSQL + pgvector 同时承载业务数据、会话记忆与知识库向量"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "AI 与外部服务",
+      "items": [
+        "模型池支持 Chat、Embedding 与自动降级",
+        "OSS 使用预签名 URL，文件不经过 FastAPI 大流量转发"
+      ]
+    }
+  ]
+}
