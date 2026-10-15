@@ -1,23 +1,43 @@
-# Technical Plan: <name>
+# Technical Plan: <capability>
 
-## Affected modules
+| 字段 | 值 |
+|---|---|
+| Spec | `<nnn>-<capability>` |
+| Status | draft \| implemented \| superseded |
+| Components | <涉及模块> |
+| State | <持久化位置与进程内状态> |
+| Rollback | <回滚方式与数据兼容性> |
 
-- `app/...`
-- `frontend/src/...`
+## 1. 实现路径
 
-## Approach
+按执行顺序描述数据与控制的流向。
 
-Describe the design and the data flow.
+## 2. 组件边界
 
-## Contracts
+每个组件只做什么、不做什么。
 
-List request/response shapes, database tables, indexes, and invariants.
+## 3. 状态与所有权
 
-## Risks and trade-offs
+| 状态 | Owner | 生命周期 |
+|---|---|---|
 
-- Risk: ...
-- Mitigation: ...
+## 4. 配置
 
-## Verification
+新增或依赖的配置项、默认值与影响范围。
 
-Document commands, fixtures, and metrics.
+## 5. 并发与线程
+
+请求线程、后台任务、锁与共享状态的处理方式。
+
+## 6. 风险与缓解
+
+| 风险 | 影响 | 缓解 |
+|---|---|---|
+
+## 7. 验证
+
+可执行的命令与手工复现步骤。
+
+## 8. 回滚
+
+回滚顺序、数据兼容性、需要人工复查的项。

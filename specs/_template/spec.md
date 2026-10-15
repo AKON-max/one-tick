@@ -1,31 +1,66 @@
-# Feature Specification: <name>
+# Feature Specification: <capability>
 
-- Status: draft | implemented | superseded
-- Owner: <name>
-- Last reviewed: YYYY-MM-DD
+| 字段 | 值 |
+|---|---|
+| Spec ID | `<nnn>-<capability>` |
+| Status | draft \| implemented \| superseded |
+| Version | 1.0.0 |
+| Owner | <team or module> |
+| Scope | <对外可观察的能力边界> |
+| Related | <相关 spec / DEV_SPEC 章节> |
+| Evidence | <代码路径 / 测试路径 / 评测脚本> |
 
-## Problem
+## 1. 背景
 
-Describe the user or engineering problem without listing implementation details.
+描述要解决的工程问题，不写实现细节。
 
-## Behavior
+## 2. 目标
 
-State the externally observable behavior and the boundaries of the feature.
+- 用可验证的句子描述目标。
 
-## Requirements
+## 3. 非目标
 
-- R1: ...
-- R2: ...
+- 明确列出本规格不解决的问题，避免把未实现的能力写成已实现。
 
-## Failure behavior
+## 4. 角色与边界
 
-Describe timeout, quota, invalid input, authorization, and retry behavior.
+| 角色 | 可以提供 | 不可以提供 |
+|---|---|---|
 
-## Acceptance criteria
+## 5. 功能需求
 
-- AC1: A test or command that proves the behavior.
-- AC2: A second observable condition.
+| ID | 优先级 | 需求 | 验证 |
+|---|---|---|---|
+| R-XXX-01 | P0 | 可测试的行为描述 | 单元测试 / 命令 / 手工步骤 |
 
-## Out of scope
+优先级：P0 必须实现且必须有验收方式；P1 影响体验或健壮性；P2 改进项。
 
-List what this specification deliberately does not solve.
+## 6. 对外契约
+
+输入输出结构、状态枚举、参数与默认值。
+
+## 7. 数据契约
+
+涉及的表、字段、约束与索引。
+
+## 8. 时序或状态机
+
+关键路径的 mermaid 图，或需要显式枚举的状态迁移。
+
+## 9. 失败行为
+
+逐条列出超时、限流、非法输入、越权、依赖不可用时系统的行为。
+
+## 10. 可观测性
+
+日志、指标、落表记录中可用来定位问题的信号。
+
+## 11. 验收标准
+
+| AC | 内容 | 方式 |
+|---|---|---|
+
+## 12. 需求追踪
+
+| 需求 | 计划 | 任务 | 验证 |
+|---|---|---|---|
